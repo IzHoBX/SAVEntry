@@ -19,3 +19,8 @@ git clone https://github.com/lamkeewei/SafeEntryLogger.git
 - Create a Firebase project in the Firebase console. 
 - Add a new Android application into your Firebase project with the package name `com.lamkeewei.android.safeentrylogger`.  
 - Download and place `google-services.json` in the `app` folder.
+
+## Acknowledgments
+- QR Code Scanner adapted from [Material ML Kit](https://github.com/firebase/mlkit-material-android).
+- Illustrations from [Undraw](https://undraw.co/).
+- QR Code Icon made by [surang](https://www.flaticon.com/authors/surang) from [www.flaticon.com](www.flaticon.com)
