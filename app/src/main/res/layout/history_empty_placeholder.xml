@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_empty_placeholder_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_empty_placeholder_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.75" />
+
+        <ImageView
+            android:id="@+id/image_empty_placeholder"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/guideline_empty_placeholder_bottom"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_empty_placeholder_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_empty_placeholder_start"
+            app:layout_constraintTop_toTopOf="@+id/guideline_empty_placeholder_top"
+            app:srcCompat="@drawable/ic_undraw_history" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_empty_placeholder_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_empty_placeholder_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/empty_placeholder_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="No History Available"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_empty_placeholder_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_empty_placeholder_start"
+            app:layout_constraintTop_toBottomOf="@+id/image_empty_placeholder" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Past records of checkouts will be stored here."
+            android:textAlignment="center"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_empty_placeholder_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_empty_placeholder_start"
+            app:layout_constraintTop_toBottomOf="@+id/empty_placeholder_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

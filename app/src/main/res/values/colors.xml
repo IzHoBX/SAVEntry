@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#b71c1c</color>
+    <color name="colorPrimarySurface">#f05545</color>
+    <color name="colorPrimaryDark">#7f0000</color>
+    <color name="colorOnPrimary">#ffffff</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="dark">#9A000000</color>
+
+    <color name="reticle_ripple">#9AFFFFFF</color>
+    <color name="barcode_reticle_background">#99000000</color>
+    <color name="barcode_reticle_stroke">#40000000</color>
+    <color name="barcode_field_value">#797979</color>
+    <color name="barcode_field_box_stroke">#757575</color>
+</resources>
