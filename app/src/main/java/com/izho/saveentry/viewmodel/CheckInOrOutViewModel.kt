@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.internal.immutableListOf
 import java.io.File
 import java.util.*
 
@@ -61,7 +62,7 @@ class CheckInOrOutViewModel(app: Application,
                 // Intercept calls to backend so that we can pick out the details about the place we
                 // are signing in from.
                 if (currentLocation.value == null && requestHost != null
-                    && requestHost == BACKEND_HOST && request.url.path == BACKEND_BUILDING_PATH
+                    && requestHost in BACKEND_HOST && request.url.path in BACKEND_BUILDING_PATH
                 ) {
                     // Copy over all the headers
                     var req = Request.Builder().url(request.url.toString())
@@ -96,7 +97,7 @@ class CheckInOrOutViewModel(app: Application,
                 super.onPageFinished(view, url)
 
                 // Check that it has navigated to the qrScan page
-                if (url != null && action != null && url.contains("qrScan")) {
+                if (url != null && action != null && (url.contains("qrScan") || url.contains("tenant"))) {
                     when(action) {
                         "checkIn" -> {
                             val clickCheckIn = """
@@ -295,7 +296,7 @@ class CheckInOrOutViewModel(app: Application,
 
     companion object {
         private const val TAG = "CheckInOrOutViewModel"
-        private const val BACKEND_HOST = "backend.temperaturepass.ndi-api.gov.sg"
-        private const val BACKEND_BUILDING_PATH = "/api/v1/building"
+        private val BACKEND_HOST = immutableListOf("backend.temperaturepass.ndi-api.gov.sg", "backend.safeentry-qr.gov.sg")
+        private val BACKEND_BUILDING_PATH = immutableListOf("/api/v1/building", "/api/v2/building")
     }
 }
