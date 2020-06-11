@@ -73,7 +73,9 @@ class CheckInOrOutViewModel(app: Application,
                     // Retrieve the cookies for the request from the WebView
                     val cookieManager = CookieManager.getInstance()
                     val cookies = cookieManager.getCookie(request.url.toString())
-                    req = req.addHeader("Cookie", cookies)
+                    if (cookies != null) {
+                        req = req.addHeader("Cookie", cookies)
+                    }
 
                     // TODO: Handle exception here.
                     val response = this@CheckInOrOutViewModel
