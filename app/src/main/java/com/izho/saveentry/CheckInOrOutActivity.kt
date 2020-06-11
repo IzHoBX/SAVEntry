@@ -2,12 +2,15 @@ package com.izho.saveentry
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.*
+import android.view.WindowManager
+import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationCompat
@@ -18,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.izho.saveentry.viewmodel.CheckInOrOutViewModel
 
+
 class CheckInOrOutActivity : AppCompatActivity() {
     private lateinit var viewModel: CheckInOrOutViewModel
     private lateinit var action: String
@@ -27,6 +31,19 @@ class CheckInOrOutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_check_in_or_out)
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+        } else {
+            // Important: have to do the following in order to show without unlocking
+            this.window.addFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            )
+        }
 
         action = intent.extras?.getString("action") ?: "checkIn"
 
@@ -76,6 +93,15 @@ class CheckInOrOutActivity : AppCompatActivity() {
                         intent.putExtra("action", "checkOut")
                         intent.putExtra("visitId", data.visit.visitId)
                         intent.putExtra("url", data.location.url)
+
+                        val sharedPref = this.getSharedPreferences("test", Context.MODE_PRIVATE)
+                        with (sharedPref.edit()) {
+                            putString("action", "checkout")
+                            putLong("visitId", data.visit.visitId)
+                            putString("url", data.location.url)
+                            putInt("notificationId", data.visit.notificationId)
+                            commit()
+                        }
 
                         val pendingIntent = TaskStackBuilder.create(this).run {
                             addNextIntentWithParentStack(intent)
@@ -136,11 +162,26 @@ class CheckInOrOutActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+        } else {
+            // Important: have to do the following in order to show without unlocking
+            this.window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            )
+        }
+
         // Each time the user put the app the background, they should re-initiate the flow
         // to prevent ending up in some weird state.
         finish()
-    }
 
+    }
+    
     companion object {
         private const val TAG = "BrowserActivity"
     }

@@ -37,6 +37,17 @@
             android:exported="false"
             android:screenOrientation="userPortrait"
             android:theme="@style/AppTheme.Camera" />
+
+        <service
+            android:name=".ExpressCheckoutTileService"
+            android:icon="@drawable/ic_safe_entry_complete_logo"
+            android:label="SAVEntry Checkout"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action
+                    android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
