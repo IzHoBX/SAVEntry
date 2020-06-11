@@ -5,13 +5,13 @@
     <data>
         <variable
             name="dataItem"
-            type="com.lamkeewei.android.safeentrylogger.ui.DataItem.VisitDataItem" />
+            type="com.izho.saveentry.ui.DataItem.VisitDataItem" />
         <variable
             name="checkOutHandler"
-            type="com.lamkeewei.android.safeentrylogger.ui.VisitDataItemEventHandler" />
+            type="com.izho.saveentry.ui.VisitDataItemEventHandler" />
         <variable
             name="deleteHandler"
-            type="com.lamkeewei.android.safeentrylogger.ui.VisitDataItemEventHandler" />
+            type="com.izho.saveentry.ui.VisitDataItemEventHandler" />
     </data>
 
     <androidx.cardview.widget.CardView

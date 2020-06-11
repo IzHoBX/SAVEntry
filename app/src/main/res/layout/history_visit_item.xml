@@ -5,7 +5,7 @@
     <data>
         <variable
             name="dataItem"
-            type="com.lamkeewei.android.safeentrylogger.ui.DataItem.VisitDataItem" />
+            type="com.izho.saveentry.ui.DataItem.VisitDataItem" />
     </data>
 
     <androidx.cardview.widget.CardView

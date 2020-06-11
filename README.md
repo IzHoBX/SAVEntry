@@ -17,7 +17,7 @@ This repo extends the app to provide check-in functionality without having to un
 git clone https://github.com/lamkeewei/SafeEntryLogger.git
 ```
 - Create a Firebase project in the Firebase console. 
-- Add a new Android application into your Firebase project with the package name `com.lamkeewei.android.safeentrylogger`.  
+- Add a new Android application into your Firebase project with the package name `com.izho.safeentrylogger`.
 - Download and place `google-services.json` in the `app` folder.
 
 ## Acknowledgments

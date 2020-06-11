@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.lamkeewei.android.safeentrylogger.viewmodel.ActiveViewModel" />
+            type="com.izho.saveentry.viewmodel.ActiveViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -5,10 +5,10 @@
     <data>
         <variable
             name="dataItem"
-            type="com.lamkeewei.android.safeentrylogger.ui.DataItem.FavoriteDataItem" />
+            type="com.izho.saveentry.ui.DataItem.FavoriteDataItem" />
         <variable
             name="checkInHandler"
-            type="com.lamkeewei.android.safeentrylogger.ui.VisitDataItemEventHandler" />
+            type="com.izho.saveentry.ui.VisitDataItemEventHandler" />
     </data>
 
     <androidx.cardview.widget.CardView
