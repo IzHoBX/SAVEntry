@@ -26,7 +26,7 @@ import java.util.*
 class CheckInOrOutViewModel(app: Application,
                             private val url: String,
                             private val action: String? = null,
-                            private val visitId: Long? = null
+                            private var visitId: Long? = null
 ) : AndroidViewModel(app) {
 
     private val database = getAppDatabase(app.applicationContext)
@@ -89,6 +89,10 @@ class CheckInOrOutViewModel(app: Application,
                             _currentLocation.postValue(
                                 Location(locationId, info.entityName, info.venueName, url))
                         }
+                    }
+                } else if (action == "checkIn" && request?.url?.path == CHECKOUT_PAGE_ICON_PATH) {
+                    if(view!=null) {
+                        checkOutOfLocation(view)
                     }
                 }
 
@@ -216,6 +220,7 @@ class CheckInOrOutViewModel(app: Application,
                 val passImage = captureSnapshot(webView)
                 val visitId = database.dao.insertVisit(
                     Visit(locationId = locationId, passImagePath = passImage))
+                this@CheckInOrOutViewModel.visitId = visitId
                 val visit = database.dao.getVisitWithLocationById(visitId)
 
                 Log.i(TAG, "Completed checking in for $locationId")
@@ -227,9 +232,10 @@ class CheckInOrOutViewModel(app: Application,
     }
 
     fun checkOutOfLocation(webView: WebView) {
-        visitId?.let {
+        val localVistId = visitId
+        localVistId?.let {
             viewModelScope.launch {
-                val data = database.dao.getVisitWithLocationById(visitId)
+                val data = database.dao.getVisitWithLocationById(localVistId)
 
                 // Delete pass image file
                 data.visit.passImagePath?.let {
@@ -300,5 +306,6 @@ class CheckInOrOutViewModel(app: Application,
         private const val TAG = "CheckInOrOutViewModel"
         private val BACKEND_HOST = immutableListOf("backend.temperaturepass.ndi-api.gov.sg", "backend.safeentry-qr.gov.sg")
         private val BACKEND_BUILDING_PATH = immutableListOf("/api/v1/building", "/api/v2/building")
+        private val CHECKOUT_PAGE_ICON_PATH = "/assets/images/successpage-tickblue-icon.svg"
     }
 }
