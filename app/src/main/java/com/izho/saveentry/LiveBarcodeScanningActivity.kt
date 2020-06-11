@@ -21,10 +21,12 @@ import android.animation.AnimatorSet
 import android.content.Intent
 import android.hardware.Camera
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
+import android.view.WindowManager
 import android.webkit.URLUtil
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -55,6 +57,18 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+        } else {
+            // Important: have to do the following in order to show without unlocking
+            this.window.addFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            )
+        }
 
         setContentView(R.layout.activity_live_barcode_kotlin)
         preview = findViewById(R.id.camera_preview)

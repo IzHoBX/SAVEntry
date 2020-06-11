@@ -55,17 +55,21 @@ class ExpressCheckoutTileService: TileService(), LifecycleOwner {
 
     override fun onClick() {
         super.onClick()
+        val intent:Intent
         if(nextVisitToUse != null) {
-            val intent = Intent(this@ExpressCheckoutTileService, CheckInOrOutActivity::class.java)
+            intent = Intent(this, CheckInOrOutActivity::class.java)
             intent.putExtra("action", "checkOut")
             intent.putExtra("visitId", nextVisitToUse!!.visit.visitId)
             intent.putExtra("url", nextVisitToUse!!.location.url)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
-            this@ExpressCheckoutTileService.startActivity(intent)
-            Log.v("start", "activity")
-            val it = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-            this@ExpressCheckoutTileService.sendBroadcast(it)
+        } else {
+            intent = Intent(this, LiveBarcodeScanningActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         }
+        this.startActivity(intent)
+        Log.v("start", "activity")
+        val it = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
+        this.sendBroadcast(it)
     }
 
     override fun onDestroy() {
