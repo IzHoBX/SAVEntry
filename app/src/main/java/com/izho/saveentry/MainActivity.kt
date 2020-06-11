@@ -28,16 +28,12 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.view_pager)
         viewPager.adapter = pageAdapter
 
-        val database = getAppDatabase(this, resetDb = false)
-        val activeVisits = database.dao.getAllActiveVisitWithLocation().observe(this, Observer { activeVisits ->
-            if (activeVisits == null || activeVisits.isEmpty()) {
-                viewPager.setCurrentItem(TAB_LABELS.indexOf("Favorites"), false)
-            }
-        })
         val tabs: TabLayout = findViewById(R.id.tabs)
         TabLayoutMediator(tabs, viewPager) { tab, position ->
             tab.text = TAB_LABELS[position]
         }.attach()
+
+        setSelectedTab()
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { _ ->
@@ -50,6 +46,18 @@ class MainActivity : AppCompatActivity() {
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this)
         }
+
+        setSelectedTab()
+    }
+
+    fun setSelectedTab() {
+        val tabs: TabLayout = findViewById(R.id.tabs)
+        val database = getAppDatabase(this, resetDb = false)
+        val activeVisits = database.dao.getAllActiveVisitWithLocation().observe(this, Observer { activeVisits ->
+            if (activeVisits == null || activeVisits.isEmpty()) {
+                tabs.selectTab(tabs.getTabAt(TAB_LABELS.indexOf("Favorites")))
+            }
+        })
     }
 
     class PageAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
