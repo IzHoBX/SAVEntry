@@ -20,6 +20,7 @@ import android.animation.ValueAnimator
 import android.util.Log
 import androidx.annotation.MainThread
 import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
 import com.google.firebase.ml.md.kotlin.barcodedetection.BarcodeLoadingGraphic
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
@@ -35,6 +36,9 @@ import java.io.IOException
 /** A processor to run the barcode detector.  */
 class BarcodeProcessor(graphicOverlay: GraphicOverlay, private val workflowModel: WorkflowModel) :
     FrameProcessorBase<List<FirebaseVisionBarcode>>() {
+    init {
+        FirebaseApp.initializeApp(graphicOverlay.context)
+    }
 
     private val detector = FirebaseVision.getInstance().visionBarcodeDetector
     private val cameraReticleAnimator: CameraReticleAnimator = CameraReticleAnimator(graphicOverlay)
