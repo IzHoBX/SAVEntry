@@ -51,11 +51,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setSelectedTab() {
-        val tabs: TabLayout = findViewById(R.id.tabs)
         val database = getAppDatabase(this, resetDb = false)
         val activeVisits = database.dao.getAllActiveVisitWithLocation().observe(this, Observer { activeVisits ->
             if (activeVisits == null || activeVisits.isEmpty()) {
-                tabs.selectTab(tabs.getTabAt(TAB_LABELS.indexOf("Favorites")))
+                viewPager.setCurrentItem((TAB_LABELS.indexOf("Favorites")), false)
             }
         })
     }
