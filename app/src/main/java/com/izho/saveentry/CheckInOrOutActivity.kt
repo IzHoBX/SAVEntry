@@ -94,15 +94,6 @@ class CheckInOrOutActivity : AppCompatActivity() {
                         intent.putExtra("visitId", data.visit.visitId)
                         intent.putExtra("url", data.location.url)
 
-                        val sharedPref = this.getSharedPreferences("test", Context.MODE_PRIVATE)
-                        with (sharedPref.edit()) {
-                            putString("action", "checkout")
-                            putLong("visitId", data.visit.visitId)
-                            putString("url", data.location.url)
-                            putInt("notificationId", data.visit.notificationId)
-                            commit()
-                        }
-
                         val pendingIntent = TaskStackBuilder.create(this).run {
                             addNextIntentWithParentStack(intent)
                             getPendingIntent(data.visit.notificationId, PendingIntent.FLAG_UPDATE_CURRENT)

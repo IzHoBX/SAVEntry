@@ -40,8 +40,8 @@
 
         <service
             android:name=".ExpressCheckoutTileService"
-            android:icon="@drawable/ic_safe_entry_complete_logo"
-            android:label="SAVEntry Checkout"
+            android:icon="@drawable/ic_login"
+            android:label="SAVEntry"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action
