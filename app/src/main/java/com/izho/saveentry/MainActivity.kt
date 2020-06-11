@@ -6,9 +6,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import com.izho.saveentry.data.getAppDatabase
 import com.izho.saveentry.ui.ActiveFragment
 import com.izho.saveentry.ui.FavoritesFragment
 import com.izho.saveentry.ui.HistoryFragment
@@ -26,6 +28,12 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.view_pager)
         viewPager.adapter = pageAdapter
 
+        val database = getAppDatabase(this, resetDb = false)
+        val activeVisits = database.dao.getAllActiveVisitWithLocation().observe(this, Observer { activeVisits ->
+            if (activeVisits == null || activeVisits.isEmpty()) {
+                viewPager.setCurrentItem(TAB_LABELS.indexOf("Favorites"), false)
+            }
+        })
         val tabs: TabLayout = findViewById(R.id.tabs)
         TabLayoutMediator(tabs, viewPager) { tab, position ->
             tab.text = TAB_LABELS[position]
