@@ -1,10 +1,10 @@
-# SafeEntry Logger
-Application to keep track of the places where I've previously check-in to using SafeEntry. Some of the core features include: 
-- Keep track of previous check-ins.
-- Checkout without having to scan QR code again.
+# SaveEntry
+This repo is forked from https://github.com/lamkeewei/SafeEntryLogger. It already have some great value proposition that I am looking for:  
 - Mark location as favorite to allow for easy check-in without scanning QR code.
+- Checkout without having to scan QR code again.
 
-Pre-built APK is available under [Releases](https://github.com/lamkeewei/SafeEntryLogger/releases). 
+This repo extends the app to provide check-in functionality without having to unlock phone or return to homepage to find for this app.  
+
 
 ## Screenshots 
 | Automated Checkin | Checkout Notification | Favorite Locations |
