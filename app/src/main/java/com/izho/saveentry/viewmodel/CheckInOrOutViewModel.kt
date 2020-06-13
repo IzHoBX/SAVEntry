@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
+import android.view.View
 import android.webkit.*
 import androidx.lifecycle.*
 import com.izho.saveentry.data.Location
@@ -216,16 +217,14 @@ class CheckInOrOutViewModel(app: Application,
         _errorMessage.value = null
     }
 
-    fun checkInToLocation(webView: WebView) {
+    fun checkInToLocation(view: View, location:Location?=currentLocation.value, isOfflineCheckIn:Boolean=false) {
         viewModelScope.launch {
-            val location = currentLocation.value
-
             if (location != null) {
                 database.dao.insertLocation(location)
 
-                val passImage = captureSnapshot(webView)
+                val passImage = captureSnapshot(view)
                 val visitId = database.dao.insertVisit(
-                    Visit(locationId = locationId, passImagePath = passImage))
+                    Visit(locationId = location.locationId, passImagePath = passImage, isOfflineCheckIn = isOfflineCheckIn))
                 this@CheckInOrOutViewModel.visitId = visitId
                 val visit = database.dao.getVisitWithLocationById(visitId)
 
@@ -237,7 +236,7 @@ class CheckInOrOutViewModel(app: Application,
         }
     }
 
-    fun checkOutOfLocation(webView: WebView) {
+    fun checkOutOfLocation(view: View) {
         val localVistId = visitId
         localVistId?.let {
             viewModelScope.launch {
@@ -262,12 +261,12 @@ class CheckInOrOutViewModel(app: Application,
         }
     }
 
-    private suspend fun captureSnapshot(webView: WebView): String? {
+    private suspend fun captureSnapshot(view: View): String? {
         return withContext(Dispatchers.IO) {
             val bitmap = Bitmap.createBitmap(
-                webView.width, webView.height, Bitmap.Config.ARGB_8888)
+                view.width, view.height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
-            webView.draw(canvas)
+            view.draw(canvas)
 
             val application = getApplication<SaveEntryLoggerApplication>()
 

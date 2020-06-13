@@ -38,6 +38,9 @@ class HistoryFragment : Fragment() {
                         1 -> {
                             val intent = Intent(this.activity, CheckInOrOutActivity::class.java)
                             intent.putExtra("url", dataItem.data.location.url)
+                            intent.putExtra("venueName", dataItem.data.location.venueName)
+                            intent.putExtra("locationId", dataItem.data.location.locationId)
+                            intent.putExtra("organization", dataItem.data.location.organization)
                             intent.putExtra("action", "checkIn")
                             startActivity(intent)
                         }

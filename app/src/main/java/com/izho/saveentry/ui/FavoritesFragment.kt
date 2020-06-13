@@ -31,6 +31,9 @@ class FavoritesFragment : Fragment() {
             val favoriteDataItem = it as DataItem.FavoriteDataItem
             val intent = Intent(this.activity, CheckInOrOutActivity::class.java)
             intent.putExtra("url", favoriteDataItem.location.url)
+            intent.putExtra("venueName", favoriteDataItem.location.venueName)
+            intent.putExtra("locationId", favoriteDataItem.location.locationId)
+            intent.putExtra("organization", favoriteDataItem.location.organization)
             intent.putExtra("action", "checkIn")
             startActivity(intent)
         }

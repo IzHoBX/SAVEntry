@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="392dp"
+    android:layout_height="646dp">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="392dp"
+        android:layout_height="646dp"
+        android:src="@drawable/checkin_screenshot"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:paddingTop="0dp"
+        android:adjustViewBounds="true"/>
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="284dp"
+        android:background="@color/offline_checkin_background"
+        android:fontFamily="@font/poppins_bold"
+        android:text="13 Jun 2020, 1:30 AM"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="27sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/location_name"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:background="@color/offline_checkin_background"
+        android:fontFamily="@font/poppins_medium"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="23sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/time" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
