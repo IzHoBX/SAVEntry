@@ -106,7 +106,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                             .setColor(getColor(R.color.colorPrimarySurface))
                             .setSmallIcon(R.drawable.ic_store)
                             .setContentTitle("Checked in to $location")
-                            .setContentText("Tap this notification to checkout from here.")
+                            .setContentText("Tap this notification to checkout_screenshot from here.")
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setOngoing(true)
                             .setContentIntent(pendingIntent)
@@ -129,6 +129,10 @@ class CheckInOrOutActivity : AppCompatActivity() {
 
                 viewModel.completeEventConfirm()
             }
+        })
+
+        viewModel._action.observe(this, Observer { newAction ->
+            action = newAction
         })
     }
 

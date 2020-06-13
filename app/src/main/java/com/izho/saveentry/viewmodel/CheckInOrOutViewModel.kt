@@ -49,7 +49,12 @@ class CheckInOrOutViewModel(app: Application,
     private val _createdVisit = MutableLiveData<VisitWithLocation>().apply {
         value = null
     }
+
     val createdVisit: LiveData<VisitWithLocation> get() = _createdVisit
+
+    val _action = MutableLiveData<String>().apply {
+        value = action
+    }
 
     val webViewClient by lazy {
         object: WebViewClient() {
@@ -90,8 +95,9 @@ class CheckInOrOutViewModel(app: Application,
                                 Location(locationId, info.entityName, info.venueName, url))
                         }
                     }
-                } else if (action == "checkIn" && request?.url?.path == CHECKOUT_PAGE_ICON_PATH) {
+                } else if (_action.value == "checkIn" && request?.url?.path == CHECKOUT_PAGE_ICON_PATH) {
                     if(view!=null) {
+                        _action.postValue("checkOut")
                         checkOutOfLocation(view)
                     }
                 }
@@ -103,8 +109,8 @@ class CheckInOrOutViewModel(app: Application,
                 super.onPageFinished(view, url)
 
                 // Check that it has navigated to the qrScan page
-                if (url != null && action != null && (url.contains("qrScan") || url.contains("tenant"))) {
-                    when(action) {
+                if (url != null && _action.value != null && (url.contains("qrScan") || url.contains("tenant"))) {
+                    when(_action.value) {
                         "checkIn" -> {
                             val clickCheckIn = """
                                 const waitElement = (selector, idx, cb) => {
