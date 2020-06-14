@@ -1,5 +1,6 @@
 package com.izho.saveentry
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import com.izho.saveentry.databinding.LocationDataBindingBinding
 import com.izho.saveentry.databinding.LocationItemBinding
@@ -44,7 +46,12 @@ class ChooseLocationForWidgetActivity : AppCompatActivity() {
                 sp.edit().putString("locationId"+iconPosition.toString(), location.locationId).apply()
                 sp.edit().putString("organization"+iconPosition.toString(), location.organization).apply()
                 Toast.makeText(this, "You can now check in to ${location.venueName} from Home Screen", Toast.LENGTH_LONG).show()
-                val intent = Intent(Intent.ACTION_MAIN);
+                val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+                var intent = Intent(this, HomeWidgetProvider::class.java)
+                intent.setAction(UPDATE_WIDGET)
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+                sendBroadcast(intent)
+                intent = Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 startActivity(intent);
             }

@@ -18,6 +18,7 @@ import androidx.lifecycle.ServiceLifecycleDispatcher
  */
 
 const val CHECK_IN_FROM_WIDGET_ACTION = "check_in_from_widget_action"
+const val UPDATE_WIDGET = "update widget"
 const val WIDGET_ICON_POSITION = "widget icon position"
 
 class HomeWidgetProvider : AppWidgetProvider(), LifecycleOwner {
@@ -75,6 +76,7 @@ class HomeWidgetProvider : AppWidgetProvider(), LifecycleOwner {
     override fun onReceive(context: Context?, intent: Intent) {
         if (intent.action == CHECK_IN_FROM_WIDGET_ACTION) {
             val iconPosition= intent.getIntExtra(WIDGET_ICON_POSITION, -1)
+            val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
             when (iconPosition) {
                 0 -> {
                     val intent = Intent(context, LiveBarcodeScanningActivity::class.java)
@@ -100,6 +102,7 @@ class HomeWidgetProvider : AppWidgetProvider(), LifecycleOwner {
                             context.startActivity(intent)
                         } else {
                             val intent = Intent(context, ChooseLocationForWidgetActivity::class.java)
+                            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
                             intent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK
                                     or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
                                     or Intent.FLAG_ACTIVITY_NO_HISTORY)
@@ -110,6 +113,12 @@ class HomeWidgetProvider : AppWidgetProvider(), LifecycleOwner {
                     }
                 }
             }
+        } else if (intent.action == UPDATE_WIDGET) {
+            Log.v("Received ", "broadcast")
+            val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+            if(context != null)
+                //onUpdate(context, AppWidgetManager.getInstance(context), IntArray(1, {index -> id}))
+                AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(id, R.id.grid_view)
         }
         super.onReceive(context, intent)
     }
@@ -138,7 +147,6 @@ class HomeWidgetService : RemoteViewsService() {
         }
 
         override fun onDataSetChanged() {
-            //numberOfLocation = List(4) { index: Int -> index }
         }
 
         override fun hasStableIds(): Boolean {
