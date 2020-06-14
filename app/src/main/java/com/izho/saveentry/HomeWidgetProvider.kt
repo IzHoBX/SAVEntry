@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import android.widget.Toast
@@ -123,6 +124,17 @@ class HomeWidgetProvider : AppWidgetProvider(), LifecycleOwner {
         super.onReceive(context, intent)
     }
 
+    override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
+        if (context != null) {
+            for (i in 1..3) {
+                val sp = context.getSharedPreferences(CHECK_IN_FROM_WIDGET_ACTION, Context.MODE_PRIVATE)
+                sp.edit().putString("venueName"+i.toString(), "").apply()
+            }
+        }
+
+        super.onDeleted(context, appWidgetIds)
+    }
+
     override fun getLifecycle(): Lifecycle = mDispatcher.lifecycle
 }
 
@@ -193,7 +205,6 @@ class HomeWidgetService : RemoteViewsService() {
         }
 
         override fun onDestroy() {
-            TODO("Not yet implemented")
         }
 
     }
