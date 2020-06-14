@@ -1,7 +1,6 @@
 package com.izho.saveentry.data
 
 import androidx.room.*
-import com.izho.saveentry.OfflineCheckInActivity
 import kotlin.math.abs
 import kotlin.random.Random
 

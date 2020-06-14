@@ -9,8 +9,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.util.TypedValue
 import android.view.*
 import android.webkit.WebView
 import android.widget.ImageView
@@ -31,7 +29,6 @@ import com.izho.saveentry.data.getAppDatabase
 import com.izho.saveentry.viewmodel.CheckInOrOutViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.net.InetAddress
 import java.util.*
 
 

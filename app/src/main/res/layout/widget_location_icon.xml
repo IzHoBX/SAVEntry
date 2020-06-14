@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="70dp"
+    android:layout_height="70dp"
+    android:orientation="vertical"
+    android:id="@+id/widget_location_icon"
+    android:gravity="center"
+    android:background="@color/colorOnPrimary">
+
+    <ImageView
+        android:id="@+id/location_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_camera_primary" />
+
+</LinearLayout>

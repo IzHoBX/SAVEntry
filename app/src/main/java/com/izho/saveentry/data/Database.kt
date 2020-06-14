@@ -22,7 +22,7 @@ interface AppDao {
     suspend fun updateLocation(location: Location): Int
 
     @Query("SELECT * FROM location WHERE location_id = :locationId")
-    fun getLocationById(locationId: Long): LiveData<Location>
+    fun getLocationById(locationId: String): LiveData<Location>
 
     @Query("SELECT * FROM location")
     fun getAllLocations(): LiveData<List<Location>>

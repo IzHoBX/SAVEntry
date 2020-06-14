@@ -16,4 +16,5 @@
     <color name="barcode_reticle_stroke">#40000000</color>
     <color name="barcode_field_value">#797979</color>
     <color name="barcode_field_box_stroke">#757575</color>
+    <color name="offline_checkin_background">#fbf9f9</color>
 </resources>

@@ -6,10 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter import androidx.recyclerview.widget.RecyclerView
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.VisitWithLocation
-import com.izho.saveentry.databinding.ActiveVisitItemBinding
-import com.izho.saveentry.databinding.FavoriteLocationItemBinding
-import com.izho.saveentry.databinding.HeaderItemBinding
-import com.izho.saveentry.databinding.HistoryVisitItemBinding
+import com.izho.saveentry.databinding.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,10 +36,11 @@ enum class VisitListItemType(val typeId: Int) {
     HEADER(0),
     ACTIVE(1),
     HISTORY(2),
-    FAVORITE(3)
+    FAVORITE(3),
+    LOCATION(4)
 }
 
-enum class VisitDataItemHandlerType { DELETE, CHECKOUT, CHECKIN, CONTEXT_MENU, SHOW_DETAILS }
+enum class VisitDataItemHandlerType { DELETE, CHECKOUT, CHECKIN, CONTEXT_MENU, SHOW_DETAILS, CHOOSE }
 
 class VisitDataItemEventHandler(private val handler: (DataItem) -> Unit) {
     fun onClick(visitDataItem: DataItem.VisitDataItem) = handler(visitDataItem)
@@ -161,6 +159,34 @@ class FavoriteLocationViewHolder private constructor(private val binding: Favori
     }
 }
 
+class LocationViewHolder private constructor(private val binding: LocationItemBinding)
+    : RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(item: DataItem.FavoriteDataItem,
+             handlers: Map<VisitDataItemHandlerType, VisitDataItemEventHandler>) {
+        binding.dataItem = item
+        handlers[VisitDataItemHandlerType.CHOOSE]?.let { handler ->
+            binding.root.setOnClickListener() { _ ->
+                handler.onClick(item)
+                true
+            }
+        }
+
+        binding.executePendingBindings()
+    }
+
+    companion object {
+        private const val TAG = "LocationViewHolder"
+
+        fun from(parent: ViewGroup) : LocationViewHolder {
+            val layoutInflater = LayoutInflater.from(parent.context)
+            val binding = LocationItemBinding
+                .inflate(layoutInflater, parent, false)
+            return LocationViewHolder(binding)
+        }
+    }
+}
+
 class DataItemAdapter(
     private val itemType: VisitListItemType,
     private val handlers: Map<VisitDataItemHandlerType, VisitDataItemEventHandler>
@@ -234,6 +260,7 @@ class DataItemAdapter(
             1 -> ActiveVisitViewHolder.from(parent)
             2 -> HistoryVisitViewHolder.from(parent)
             3 -> FavoriteLocationViewHolder.from(parent)
+            4 -> LocationViewHolder.from(parent)
             else -> throw ClassNotFoundException("Unknown item type")
         }
     }
@@ -251,6 +278,9 @@ class DataItemAdapter(
                 holder.bind((data as DataItem.DateHeader).time)
             }
             is FavoriteLocationViewHolder -> {
+                holder.bind((data as DataItem.FavoriteDataItem), handlers)
+            }
+            is LocationViewHolder -> {
                 holder.bind((data as DataItem.FavoriteDataItem), handlers)
             }
         }

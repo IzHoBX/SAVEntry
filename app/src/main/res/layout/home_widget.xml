@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="340dp"
+    android:layout_height="103dp"
+    android:background="@color/colorPrimary"
+    android:padding="@dimen/widget_margin"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:textColor="@color/colorOnPrimary"
+        android:text="SAVEntry Check In"/>
+
+    <GridView
+        android:layout_marginTop="3dp"
+        android:background="@color/colorPrimary"
+        android:id="@+id/grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="4" />
+
+</LinearLayout>

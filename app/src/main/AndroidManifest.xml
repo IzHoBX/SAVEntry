@@ -17,7 +17,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
+        <activity
+            android:name=".ChooseLocationForWidgetActivity"
+            android:label="@string/title_activity_choose_location_for_widget"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
 
+        <receiver android:name=".HomeWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/home_widget_info" />
+        </receiver>
 
         <activity android:name=".ShowPassImageActivity" />
         <activity
