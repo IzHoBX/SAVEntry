@@ -14,9 +14,9 @@ As such, Android OS features such as
 
 ## SafeEntry vs SAVEntry:
 
-Checking in from lock screen:
-SafeEntry:
-Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check in" -> press "check in" again -> done
+Checking in from lock screen:\n
+SafeEntry:\n
+Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check in" -> press "check in" again -> done\n
 SAVEntry (widget)
 Unlock screen -> Choose location from widget -> tap on the location -> done
 SAVEntry (Settings tile)
