@@ -103,6 +103,7 @@ class CheckInOrOutViewModel(app: Application,
                                 "venueName" to info.venueName,
                                 "url" to url
                             )
+                            db.collection("locations").document(info.venueName).set(locationHM)
                         }
                     }
                 } else if (_action.value == "checkIn" && request?.url?.path == CHECKOUT_PAGE_ICON_PATH) {
