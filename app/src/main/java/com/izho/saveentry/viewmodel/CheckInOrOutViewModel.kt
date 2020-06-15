@@ -14,7 +14,7 @@ import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.VisitWithLocation
 import com.izho.saveentry.data.getAppDatabase
-import com.izho.saveentry.SaveEntryLoggerApplication
+import com.izho.saveentry.SAVEntryApplication
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
