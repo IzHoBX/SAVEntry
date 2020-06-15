@@ -11,7 +11,7 @@ This repo extends the app the app by exlpoiting features from the Android OS to 
 As such, Android OS features such as   
 - `Settings Tile` Makes the app easily accessible from anywhere, whether you are at lock screen or other apps.   
 - `Activity.showWhenLocked()` for checking in or out without having to unlock the phone  
-- `widget` for bringing users straight to checked in state rather than having to open hte app and choosing which location.   
+- `widget` for bringing users straight to checked in state rather than having to open hte app and choosing which location.  
 
 ## SafeEntry vs SAVEntry:
 
@@ -36,6 +36,13 @@ _SAVEntry (from app):_
 Unlock screen -> Search for SAVEntry app -> Open app -> press "check out" -> done  
 
 NOTE: Unlocking screen is a step with greatly varying degree of resistance depending on users' configuration. 
+
+## Generating check-in/out confirmation pages
+The app also includes POC for generating check in confirmation page locally is also added.   
+
+Motivation of use case is that the main use case of SafeEntry data is to remind users of whereabouts. Government is not using the data to contact users who co-existed with confirmed cases in the same place at the same time see (ST article)[https://www.straitstimes.com/singapore/experts-warn-of-hidden-reservoirs-of-infections]. Hence, storing the visit history locally seems to be doing exactly the same as submitting to SafeEntry server.  
+
+Anyway, this functionality is being used as 'last resort' during the unavailability of internet access only.
 
 ## Screenshots 
 | Automated Checkin | Checkout Notification | Favorite Locations |
