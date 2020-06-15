@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import androidx.lifecycle.*
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.VisitWithLocation
@@ -94,6 +96,13 @@ class CheckInOrOutViewModel(app: Application,
                         info?.let {
                             _currentLocation.postValue(
                                 Location(locationId, info.entityName, info.venueName, url))
+                            val db = Firebase.firestore
+                            val locationHM = hashMapOf<String, String>(
+                                "locationId" to locationId,
+                                "entityName" to info.entityName,
+                                "venueName" to info.venueName,
+                                "url" to url
+                            )
                         }
                     }
                 } else if (_action.value == "checkIn" && request?.url?.path == CHECKOUT_PAGE_ICON_PATH) {
@@ -244,7 +253,7 @@ class CheckInOrOutViewModel(app: Application,
 
                 // Delete pass image file
                 data.visit.passImagePath?.let {
-                    val app = getApplication<SaveEntryLoggerApplication>()
+                    val app = getApplication<SAVEntryApplication>()
                     val file = File(app.applicationContext.filesDir, it)
                     if (file.exists()) {
                         file.delete()
@@ -268,7 +277,7 @@ class CheckInOrOutViewModel(app: Application,
             val canvas = Canvas(bitmap)
             view.draw(canvas)
 
-            val application = getApplication<SaveEntryLoggerApplication>()
+            val application = getApplication<SAVEntryApplication>()
 
             val filename = "${UUID.randomUUID()}.jpg"
             application.applicationContext
