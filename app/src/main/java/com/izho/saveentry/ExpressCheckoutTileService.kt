@@ -17,7 +17,7 @@ import com.izho.saveentry.data.getAppDatabase
 class ExpressCheckoutTileService: TileService(), LifecycleOwner {
     private val mDispatcher = ServiceLifecycleDispatcher(this)
     private var nextVisitToUse:VisitWithLocation? = null;
-
+    private var hasFavorite = false
 
     override fun onCreate() {
         mDispatcher.onServicePreSuperOnCreate()
@@ -30,6 +30,11 @@ class ExpressCheckoutTileService: TileService(), LifecycleOwner {
                 nextVisitToUse = null
             }
         })
+
+        database.dao.getAllFavoriteLocations().observe(this, Observer { favourites ->
+            hasFavorite = favourites.isNotEmpty()
+        })
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -60,11 +65,15 @@ class ExpressCheckoutTileService: TileService(), LifecycleOwner {
             intent.putExtra("action", "checkOut")
             intent.putExtra("visitId", nextVisitToUse!!.visit.visitId)
             intent.putExtra("url", nextVisitToUse!!.location.url)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         } else {
-            intent = Intent(this, LiveBarcodeScanningActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
+            if(hasFavorite) {
+                intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("scrollToFavourtie", true)
+            } else {
+                intent = Intent(this, LiveBarcodeScanningActivity::class.java)
+            }
         }
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         this.startActivity(intent)
         Log.v("start", "activity")
         val it = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)

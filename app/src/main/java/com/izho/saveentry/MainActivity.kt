@@ -51,12 +51,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setSelectedTab() {
-        val database = getAppDatabase(this, resetDb = false)
-        val activeVisits = database.dao.getAllActiveVisitWithLocation().observe(this, Observer { activeVisits ->
-            if (activeVisits == null || activeVisits.isEmpty()) {
-                viewPager.setCurrentItem((TAB_LABELS.indexOf("Favorites")), false)
-            }
-        })
+        if(intent.hasExtra("scrollToFavourtie")) {
+            viewPager.setCurrentItem((TAB_LABELS.indexOf("Favorites")), false)
+            //so that subsequent opening of the app wont be stucked to favorite
+            intent.removeExtra("scrollToFavourtie")
+        } else {
+            val database = getAppDatabase(this, resetDb = false)
+            val activeVisits = database.dao.getAllActiveVisitWithLocation().observe(this, Observer { activeVisits ->
+                if (activeVisits == null || activeVisits.isEmpty()) {
+                    viewPager.setCurrentItem((TAB_LABELS.indexOf("Favorites")), false)
+                }
+            })
+        }
     }
 
     class PageAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
