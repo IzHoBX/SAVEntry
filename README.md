@@ -17,22 +17,22 @@ As such, Android OS features such as
 Checking in from lock screen:    
 SafeEntry:    
 Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check in" -> press "check in" again -> done   
-SAVEntry (widget)
-Unlock screen -> Choose location from widget -> tap on the location -> done
-SAVEntry (Settings tile)
-open status bar -> tap on SAVEntry settings tile -> choose location -> done
-SAVEntry (from app)
-Unlock screen -> Search for SAVEntry app -> Open app -> choose location -> tap on location -> done
+SAVEntry (widget)  
+Unlock screen -> Choose location from widget -> tap on the location -> done  
+SAVEntry (Settings tile)  
+open status bar -> tap on SAVEntry settings tile -> choose location -> done  
+SAVEntry (from app)  
+Unlock screen -> Search for SAVEntry app -> Open app -> choose location -> tap on location -> done  
 
-Checking out from lock screen:
-SafeEntry:
-Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check out" -> done
-SAVEntry (notification)
-tap on SAVEntry notification -> unlock screen -> done
-SAVEntry (Settings tile)
-open status bar -> tap on SAVEntry settings tile -> done
-SAVEntry (from app)
-Unlock screen -> Search for SAVEntry app -> Open app -> press "check out" -> done
+Checking out from lock screen:  
+SafeEntry:  
+Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check out" -> done  
+SAVEntry (notification)  
+tap on SAVEntry notification -> unlock screen -> done  
+SAVEntry (Settings tile)  
+open status bar -> tap on SAVEntry settings tile -> done  
+SAVEntry (from app)  
+Unlock screen -> Search for SAVEntry app -> Open app -> press "check out" -> done  
 
 ## Screenshots 
 | Automated Checkin | Checkout Notification | Favorite Locations |
