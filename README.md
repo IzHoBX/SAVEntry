@@ -6,33 +6,36 @@ This repo is forked from https://github.com/lamkeewei/SafeEntryLogger. It alread
 
 This repo extends the app the app by exlpoiting features from the Android OS to further streamline the process between engaging your phone and reaching the "check in confirmed" page. The 2 major time and attention consuming hindrances of this process include:
 1. The need for unlocking the phone. 
-2. Searching for the app among all other apps. 
-As such, Android OS features such as 
-`Settings Tile` Makes the app easily accessible from anywhere, whether you are at lock screen or other apps. 
-`Activity.showWhenLocked()` for checking in or out without having to unlock the phone
-`widget` for bringing users straight to checked in state rather than having to open hte app and choosing which location. 
+2. Searching for the app among all other apps.  
+
+As such, Android OS features such as   
+- `Settings Tile` Makes the app easily accessible from anywhere, whether you are at lock screen or other apps.   
+- `Activity.showWhenLocked()` for checking in or out without having to unlock the phone  
+- `widget` for bringing users straight to checked in state rather than having to open hte app and choosing which location.   
 
 ## SafeEntry vs SAVEntry:
 
-Checking in from lock screen:    
-SafeEntry:    
+**Checking in from lock screen**:    
+__SafeEntry__    
 Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check in" -> press "check in" again -> done   
-SAVEntry (widget)  
+__SAVEntry (widget)__  
 Unlock screen -> Choose location from widget -> tap on the location -> done  
-SAVEntry (Settings tile)  
+__SAVEntry (Settings tile)__  
 open status bar -> tap on SAVEntry settings tile -> choose location -> done  
-SAVEntry (from app)  
+__SAVEntry (from app)__  
 Unlock screen -> Search for SAVEntry app -> Open app -> choose location -> tap on location -> done  
 
-Checking out from lock screen:  
-SafeEntry:  
+**Checking out from lock screen:**  
+__SafeEntry__  
 Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check out" -> done  
-SAVEntry (notification)  
+__SAVEntry (notification)__  
 tap on SAVEntry notification -> unlock screen -> done  
-SAVEntry (Settings tile)  
+__SAVEntry (Settings tile)__  
 open status bar -> tap on SAVEntry settings tile -> done  
-SAVEntry (from app)  
+__SAVEntry (from app)__  
 Unlock screen -> Search for SAVEntry app -> Open app -> press "check out" -> done  
+
+NOTE: Unlocking screen is a step with greatly varying degree of resistance depending on users' configuration. 
 
 ## Screenshots 
 | Automated Checkin | Checkout Notification | Favorite Locations |
