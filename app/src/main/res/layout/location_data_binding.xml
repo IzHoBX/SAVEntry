@@ -31,7 +31,7 @@
             tools:listitem="@layout/location_item" />
 
         <include
-            layout="@layout/favorites_empty_placeholder"
+            layout="@layout/location_empty_placeholder"
             isVisible="@{viewModel.allLocations.empty}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

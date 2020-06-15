@@ -28,7 +28,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline_empty_placeholder_end"
             app:layout_constraintStart_toStartOf="@+id/guideline_empty_placeholder_start"
             app:layout_constraintTop_toTopOf="@+id/guideline_empty_placeholder_top"
-            app:srcCompat="@drawable/ic_undraw_history" />
+            app:srcCompat="@drawable/ic_undraw_no_data_qbuo" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_empty_placeholder_top"
@@ -49,7 +49,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="No History Available"
+            android:text="No Location Available"
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp"
@@ -62,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Past records of checkouts will be stored here."
+            android:text="You can only add previously checked in locations. Try visiting some places and come back again."
             android:textAlignment="center"
             app:layout_constraintEnd_toStartOf="@+id/guideline_empty_placeholder_end"
             app:layout_constraintStart_toStartOf="@+id/guideline_empty_placeholder_start"
