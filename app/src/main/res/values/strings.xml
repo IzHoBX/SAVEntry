@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Safe Entry Logger</string>
+    <string name="app_name">SAVEntry</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
 
-    <string name="channel_id">Safe Entry Logger</string>
-    <string name="channel_name">Safe Entry Logger Notifications</string>
+    <string name="channel_id">SAVEntry Logger</string>
+    <string name="channel_name">SAVEntry Logger Notifications</string>
     <string name="channel_description">Notification channel for notifying of active check ins.</string>
 
     <string name="scan_shortcut_short">Scan QR</string>
