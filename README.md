@@ -40,7 +40,7 @@ NOTE: Unlocking screen is a step with greatly varying degree of resistance depen
 ## Generating check-in/out confirmation pages
 The app also includes POC for generating check in confirmation page locally is also added.   
 
-Motivation of use case is that the main use case of SafeEntry data is to remind users of whereabouts. Government is not using the data to contact users who co-existed with confirmed cases in the same place at the same time see (ST article)[https://www.straitstimes.com/singapore/experts-warn-of-hidden-reservoirs-of-infections]. Hence, storing the visit history locally seems to be doing exactly the same as submitting to SafeEntry server.  
+Motivation of use case is that the main use case of SafeEntry data is to remind users of whereabouts. Government is not using the data to contact users who co-existed with confirmed cases in the same place at the same time see [ST article](https://www.straitstimes.com/singapore/experts-warn-of-hidden-reservoirs-of-infections). Hence, storing the visit history locally seems to be doing exactly the same as submitting to SafeEntry server.  
 
 Anyway, this functionality is being used as 'last resort' during the unavailability of internet access only.
 
