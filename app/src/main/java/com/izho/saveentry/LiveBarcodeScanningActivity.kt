@@ -19,6 +19,7 @@ package com.izho.saveentry
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.net.Uri
 import android.os.Build
@@ -28,7 +29,9 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.WindowManager
 import android.webkit.URLUtil
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
@@ -42,6 +45,9 @@ import com.izho.saveentry.camera.GraphicOverlay
 import com.izho.saveentry.camera.WorkflowModel
 import com.izho.saveentry.camera.WorkflowModel.WorkflowState
 import java.io.IOException
+import java.util.jar.Manifest
+
+const val CAMERA_PERMISSSION_REQUEST_CODE = 5
 
 /** Demonstrates the barcode scanning workflow using camera preview.  */
 class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
@@ -88,16 +94,38 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
             setOnClickListener(this@LiveBarcodeScanningActivity)
         }
 
-        setUpWorkflowModel()
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(Array<String>(1, {index -> android.Manifest.permission.CAMERA}), CAMERA_PERMISSSION_REQUEST_CODE)
+        } else {
+            setUpWorkflowModel()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if(requestCode == CAMERA_PERMISSSION_REQUEST_CODE) {
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED) {
+                setUpWorkflowModel()
+            } else {
+                Toast.makeText(this, "Please give permission to use camera for scanning QR code", Toast.LENGTH_LONG).show()
+                finish()
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onResume() {
         super.onResume()
 
-        workflowModel?.markCameraFrozen()
-        currentWorkflowState = WorkflowState.NOT_STARTED
-        cameraSource?.setFrameProcessor(BarcodeProcessor(graphicOverlay!!, workflowModel!!))
-        workflowModel?.setWorkflowState(WorkflowState.DETECTING)
+        if(workflowModel != null) {
+            workflowModel?.markCameraFrozen()
+            currentWorkflowState = WorkflowState.NOT_STARTED
+            cameraSource?.setFrameProcessor(BarcodeProcessor(graphicOverlay!!, workflowModel!!))
+            workflowModel?.setWorkflowState(WorkflowState.DETECTING)
+        }
     }
 
     override fun onPostResume() {
