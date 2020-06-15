@@ -134,10 +134,10 @@ class CheckInOrOutViewModel(app: Application,
                                         }
                                     }, 100);
                                 }
-                                
+
                                 waitElement('.safeentry-check-btn', 0, checkInBtn => {
                                     checkInBtn.click();
-                                    
+
                                     waitElement('.submit-button button', 0, (submitBtn) => {
                                         if (submitBtn.disabled) {
                                             alert('${MessageType.NO_DETAILS.name}');
@@ -146,7 +146,7 @@ class CheckInOrOutViewModel(app: Application,
                                         }
                                     });
                                 });
-                                
+
                                 waitElement('.safe-entry-card', 0, card => {
                                     alert('${MessageType.CHECK_IN_COMPLETED.name}');
                                 });
@@ -166,10 +166,10 @@ class CheckInOrOutViewModel(app: Application,
                                         }
                                     }, 100);
                                 }
-                                
+
                                 waitElement('.safeentry-check-btn', 1, checkInBtn => {
                                     checkInBtn.click();
-                                    
+
                                     waitElement('.submit-button button', 0, (submitBtn) => {
                                         if (submitBtn.disabled) {
                                             alert('${MessageType.NO_DETAILS.name}');
@@ -178,7 +178,7 @@ class CheckInOrOutViewModel(app: Application,
                                         }
                                     });
                                 });
-                                
+
                                 waitElement('.safe-entry-card', 0, card => {
                                     alert('${MessageType.CHECK_OUT_COMPLETED.name}');
                                 });
@@ -206,7 +206,7 @@ class CheckInOrOutViewModel(app: Application,
                             MessageType.CHECK_IN_COMPLETED -> checkInToLocation(view)
                             MessageType.CHECK_OUT_COMPLETED -> checkOutOfLocation(view)
                             MessageType.NO_DETAILS -> {
-                                errorMessage.value = "Please fill in details and continue."
+                                errorMessage.value = "Please fill in details for the first time."
                                 Log.i(TAG, "Unable to automatically " +
                                         "check in/out as details are not provided.")
                             }
