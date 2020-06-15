@@ -1,5 +1,6 @@
 package com.izho.saveentry.viewmodel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -246,6 +247,7 @@ class CheckInOrOutViewModel(app: Application,
         }
     }
 
+    @SuppressLint("Parameter never used")
     fun checkOutOfLocation(view: View) {
         val localVistId = visitId
         localVistId?.let {
