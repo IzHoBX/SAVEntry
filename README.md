@@ -16,23 +16,23 @@ As such, Android OS features such as
 ## SafeEntry vs SAVEntry:
 
 **Checking in from lock screen**:    
-__SafeEntry__    
+_SafeEntry_    
 Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check in" -> press "check in" again -> done   
-__SAVEntry (widget)__  
+_SAVEntry (widget)_  
 Unlock screen -> Choose location from widget -> tap on the location -> done  
-__SAVEntry (Settings tile)__  
+_SAVEntry (Settings tile)_  
 open status bar -> tap on SAVEntry settings tile -> choose location -> done  
-__SAVEntry (from app)__  
+_SAVEntry (from app)_  
 Unlock screen -> Search for SAVEntry app -> Open app -> choose location -> tap on location -> done  
 
 **Checking out from lock screen:**  
-__SafeEntry__  
+_SafeEntry_  
 Unlock screen -> Search for scanner -> Open scanner -> point to scan -> press "check out" -> done  
-__SAVEntry (notification)__  
+_SAVEntry (notification)_  
 tap on SAVEntry notification -> unlock screen -> done  
-__SAVEntry (Settings tile)__  
+_SAVEntry (Settings tile)_  
 open status bar -> tap on SAVEntry settings tile -> done  
-__SAVEntry (from app)__  
+_SAVEntry (from app)_  
 Unlock screen -> Search for SAVEntry app -> Open app -> press "check out" -> done  
 
 NOTE: Unlocking screen is a step with greatly varying degree of resistance depending on users' configuration. 
