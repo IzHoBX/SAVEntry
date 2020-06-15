@@ -48,5 +48,9 @@ git clone https://github.com/lamkeewei/SafeEntryLogger.git
 - Add a new Android application into your Firebase project. 
 - Download and place `google-services.json` in the `app` folder.
 
+## Privacy Assurance
+None of the user's personal info (NRIC and phone number) is upl oaded or stored in the cloud. The whereabouts of user at any given time is also not recorded on servers. All data are saved locally and users have full control over them. The handling of NRIC and phone number is through the webview, which is exactly the same as the default phone browser Chrome. 
+This app is made open-source for open inspection so as to prove and maintain the above assurance. 
+
 ## Acknowledgments
 - [Original repo](https://github.com/lamkeewei/SafeEntryLogger). It's great to have found something exactly what I wanted to do, saving me efforts on tinkering the app skeletons and webview intercepts.  
