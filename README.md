@@ -39,11 +39,11 @@ Unlock screen -> Search for SAVEntry app -> Open app -> press "check out" -> don
 | ----------- | ----------- | --- |
 | <img src="screenshots/checkin.gif" width=256 /> | <img src="screenshots/checkout.gif" width=256 /> | <img src="screenshots/favorite.gif" width=256 /> |
 
-## Build and Run Locally
-- Clone the repo locally 
-```
-git clone https://github.com/lamkeewei/SafeEntryLogger.git
-```
+## For end users
+Download the apk from [releases](https://github.com/IzHoBX/SAVEntry/releases) and install on phone.
+
+## For developers
+- Clone the repo  
 - Create a Firebase project in the Firebase console. 
 - Add a new Android application into your Firebase project. 
 - Download and place `google-services.json` in the `app` folder.
