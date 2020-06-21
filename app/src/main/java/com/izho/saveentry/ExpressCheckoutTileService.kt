@@ -66,12 +66,7 @@ class ExpressCheckoutTileService: TileService(), LifecycleOwner {
             intent.putExtra("visitId", nextVisitToUse!!.visit.visitId)
             intent.putExtra("url", nextVisitToUse!!.location.url)
         } else {
-            if(hasFavorite) {
-                intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("scrollToFavourtie", true)
-            } else {
-                intent = Intent(this, LiveBarcodeScanningActivity::class.java)
-            }
+            intent = Intent(this, LiveBarcodeScanningActivity::class.java)
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         this.startActivity(intent)
