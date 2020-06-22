@@ -314,5 +314,6 @@ class CheckInOrOutViewModel(app: Application,
         private val BACKEND_HOST = immutableListOf("backend.temperaturepass.ndi-api.gov.sg", "backend.safeentry-qr.gov.sg")
         private val BACKEND_BUILDING_PATH = immutableListOf("/api/v1/building", "/api/v2/building")
         private val CHECKOUT_PAGE_ICON_PATH = "/assets/images/successpage-tickblue-icon.svg"
+        const val QR_URL_PREFIX = "https://temperaturepass.ndi-api.gov.sg/login/"
     }
 }

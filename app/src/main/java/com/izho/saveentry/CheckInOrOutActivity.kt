@@ -118,13 +118,32 @@ class CheckInOrOutActivity : AppCompatActivity() {
                 toolbar.title = "Offline check in..."
                 offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView).setImageDrawable(getDrawable(R.drawable.checkin_screenshot))
                 Toast.makeText(this, "No internet, using offline check in", Toast.LENGTH_SHORT).show()
-                offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text = intent.extras?.getString("venueName") ?: ""
+
+                var venueName = intent.extras?.getString("venueName") ?: ""
+                if (venueName == "") {//"https://temperaturepass.ndi-api.gov.sg/login/PROD-200604346E-11177-NUSUTR-SE"
+                    val urlParams = url.substring(CheckInOrOutViewModel.QR_URL_PREFIX.length)
+                    //URL format: PROD | ALPHA-NUMERIC-BLK+ | Place name | "SE"*
+                    val blocks = urlParams.split("-")
+                    if(blocks[blocks.size-1] == "SE") {
+                        venueName = blocks[blocks.size-2]
+                    } else {
+                        venueName = blocks[blocks.size-2] + " " + blocks[blocks.size-1]
+                    }
+                }
+                offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text = venueName
+
+                //location id is the params or path of url, i.e. everything starting from "PROD-...."
+                var locationId = intent.extras?.getString("locationId") ?: ""
+                if (locationId == "") {
+                    locationId = url.substring(CheckInOrOutViewModel.QR_URL_PREFIX.length)
+                }
+
                 offlineCheckInOrOut.viewTreeObserver.addOnGlobalLayoutListener(object:ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         viewModel.checkInToLocation(offlineCheckInOrOut, Location(
-                            intent.extras?.getString("locationId") ?: "",
+                            locationId,
                             intent.extras?.getString("organization") ?: "",
-                            intent.extras?.getString("venueName") ?: "",
+                            venueName,
                             intent.extras?.getString("url") ?: ""
                         ), true)
                         offlineCheckInOrOut.viewTreeObserver.removeOnGlobalLayoutListener(this)
