@@ -14,6 +14,7 @@ import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.VisitWithLocation
 import com.izho.saveentry.data.getAppDatabase
 import com.izho.saveentry.SAVEntryApplication
+import com.izho.saveentry.SafeEntryParser
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +59,10 @@ class CheckInOrOutViewModel(app: Application,
         value = action
     }
 
+    val _networkExecutionError = MutableLiveData<Boolean>().apply {
+        value = false
+    }
+
     val webViewClient by lazy {
         object: WebViewClient() {
             override fun shouldInterceptRequest(
@@ -85,17 +90,24 @@ class CheckInOrOutViewModel(app: Application,
                     }
 
                     // TODO: Handle exception here.
-                    val response = this@CheckInOrOutViewModel
-                        .httpClient.newCall(req.build()).execute()
+                    try {
+                        val response = this@CheckInOrOutViewModel
+                            .httpClient.newCall(req.build()).execute()
 
-                    val jsonData = response.body?.charStream()?.readText()
-                    Log.i(TAG, "$jsonData")
-                    jsonData?.let {
-                        val info = buildingInfoAdapter.fromJson(jsonData)
-                        info?.let {
-                            _currentLocation.postValue(
-                                Location(locationId, info.entityName, info.venueName, url))
+                        val jsonData = response.body?.charStream()?.readText()
+                        Log.i(TAG, "$jsonData")
+                        jsonData?.let {
+                            val info = buildingInfoAdapter.fromJson(jsonData)
+                            info?.let {
+                                _currentLocation.postValue(
+                                    Location(locationId, info.entityName, info.venueName, url))
+                            }
                         }
+                    } catch (e:Throwable) {
+                        //this is just in-case. By right if our fetch encounter error, webview will also show error and user will take action from there
+                        _currentLocation.postValue(
+                            Location(locationId, "UKNOWN", SafeEntryParser.getLocationId(url), url))
+                        _networkExecutionError.postValue(true)
                     }
                 } else if (_action.value == "checkIn" && request?.url?.path == CHECKOUT_PAGE_ICON_PATH) {
                     if(view!=null) {
