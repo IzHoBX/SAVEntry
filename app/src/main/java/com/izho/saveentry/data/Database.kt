@@ -9,7 +9,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Dao
 interface AppDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertLocation(location: Location): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
