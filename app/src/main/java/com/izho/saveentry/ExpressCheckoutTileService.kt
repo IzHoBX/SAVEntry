@@ -6,6 +6,7 @@ import android.os.IBinder
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -66,12 +67,7 @@ class ExpressCheckoutTileService: TileService(), LifecycleOwner {
             intent.putExtra("visitId", nextVisitToUse!!.visit.visitId)
             intent.putExtra("url", nextVisitToUse!!.location.url)
         } else {
-            if(hasFavorite) {
-                intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("scrollToFavourtie", true)
-            } else {
-                intent = Intent(this, LiveBarcodeScanningActivity::class.java)
-            }
+            intent = Intent(this, LiveBarcodeScanningActivity::class.java)
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         this.startActivity(intent)
@@ -88,6 +84,11 @@ class ExpressCheckoutTileService: TileService(), LifecycleOwner {
     override fun onBind(intent: Intent?): IBinder? {
         mDispatcher.onServicePreSuperOnBind()
         return super.onBind(intent)
+    }
+
+    override fun onTileAdded() {
+        Toast.makeText(this, "You can now check in or out faster - even without unlocking your phone", Toast.LENGTH_LONG).show()
+        super.onTileAdded()
     }
 
     override fun getLifecycle(): Lifecycle = mDispatcher.lifecycle

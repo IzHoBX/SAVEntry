@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.webkit.WebView
 import android.widget.ImageView
@@ -22,6 +23,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.VisitWithLocation
@@ -37,7 +39,6 @@ fun Date.toDisplayString() : String {
     val simpleDateFormat = SimpleDateFormat(pattern)
     return simpleDateFormat.format(this)
 }
-
 
 class CheckInOrOutActivity : AppCompatActivity() {
     private lateinit var viewModel: CheckInOrOutViewModel
@@ -68,6 +69,20 @@ class CheckInOrOutActivity : AppCompatActivity() {
         val visitId = intent.extras?.getLong("visitId")
         var visitWithLocation:VisitWithLocation? = null
 
+        var receivedResponse = false
+
+        if(action == "checkIn") {
+            val allActiveVisit = getAppDatabase(this, resetDb = false).dao.getActiveVisitWithLocationId(SafeEntryParser.getLocationId(url!!))
+            allActiveVisit.observe(this, Observer {
+                allActiveVisit.removeObservers(this)
+                Log.v("repeated", it.size.toString())
+                if(it.size > 0) {
+                    Toast.makeText(this, "You already checked-in to this location", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            })
+        }
+
         if (visitId != null) {
             GlobalScope.launch {
                 visitWithLocation = getAppDatabase(this@CheckInOrOutActivity, resetDb = false).dao.getVisitWithLocationById(visitId)
@@ -88,7 +103,15 @@ class CheckInOrOutActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory).get(CheckInOrOutViewModel::class.java)
 
         webView = findViewById(R.id.webview_browser)
+        /*conditions to use online
+        1. has internet
+        2. has no internet, and the current action is check out, but the visit was checked in online --> must checked out online to ensure server logged user as checked out
+         */
         if(isInternetAvailable() || (visitWithLocation != null && !(visitWithLocation!!.visit.isOfflineCheckIn))) {
+            if(!isInternetAvailable()) {
+                // condition 2
+                Toast.makeText(this, "You checked in online previously. Hence you must check out online as well. Please turn on internet connection.", Toast.LENGTH_LONG).show()
+            }
             webView.apply {
                 @SuppressLint("SetJavaScriptEnabled")
                 settings.javaScriptEnabled = true
@@ -111,13 +134,32 @@ class CheckInOrOutActivity : AppCompatActivity() {
                 toolbar.title = "Offline check in..."
                 offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView).setImageDrawable(getDrawable(R.drawable.checkin_screenshot))
                 Toast.makeText(this, "No internet, using offline check in", Toast.LENGTH_SHORT).show()
-                offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text = intent.extras?.getString("venueName") ?: ""
+
+                var venueName = intent.extras?.getString("venueName") ?: ""
+                if (venueName == "") {//"https://temperaturepass.ndi-api.gov.sg/login/PROD-200604346E-11177-NUSUTR-SE"
+                    val urlParams = SafeEntryParser.getLocationId(url)
+                    //URL format: PROD | ALPHA-NUMERIC-BLK+ | Place name | "SE"*
+                    val blocks = urlParams.split("-")
+                    if(blocks[blocks.size-1] == "SE") {
+                        venueName = blocks[blocks.size-2]
+                    } else {
+                        venueName = blocks[blocks.size-2] + " " + blocks[blocks.size-1]
+                    }
+                }
+                offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text = venueName
+
+                //location id is the params or path of url, i.e. everything starting from "PROD-...."
+                var locationId = intent.extras?.getString("locationId") ?: ""
+                if (locationId == "") {
+                    locationId = SafeEntryParser.getLocationId(url)
+                }
+
                 offlineCheckInOrOut.viewTreeObserver.addOnGlobalLayoutListener(object:ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         viewModel.checkInToLocation(offlineCheckInOrOut, Location(
-                            intent.extras?.getString("locationId") ?: "",
+                            locationId,
                             intent.extras?.getString("organization") ?: "",
-                            intent.extras?.getString("venueName") ?: "",
+                            venueName,
                             intent.extras?.getString("url") ?: ""
                         ), true)
                         offlineCheckInOrOut.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -173,7 +215,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setOngoing(true)
                             .setContentIntent(pendingIntent)
-                            .setAutoCancel(true)
+                            .setAutoCancel(false)
 
                         with(NotificationManagerCompat.from(this)) {
                             notify(data.visit.notificationId, builder.build())

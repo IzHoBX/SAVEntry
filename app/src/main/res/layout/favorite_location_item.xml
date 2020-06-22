@@ -52,7 +52,7 @@
             <TextView
                 android:id="@+id/text_venue"
                 titleCase="@{dataItem.location.venueName}"
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="18sp"
