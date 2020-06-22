@@ -9,8 +9,6 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import androidx.lifecycle.*
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.VisitWithLocation
@@ -97,14 +95,6 @@ class CheckInOrOutViewModel(app: Application,
                         info?.let {
                             _currentLocation.postValue(
                                 Location(locationId, info.entityName, info.venueName, url))
-                            val db = Firebase.firestore
-                            val locationHM = hashMapOf<String, String>(
-                                "locationId" to locationId,
-                                "entityName" to info.entityName,
-                                "venueName" to info.venueName,
-                                "url" to url
-                            )
-                            db.collection("locations").document(info.venueName).set(locationHM)
                         }
                     }
                 } else if (_action.value == "checkIn" && request?.url?.path == CHECKOUT_PAGE_ICON_PATH) {
