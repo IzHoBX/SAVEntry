@@ -9,6 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Dao
 interface AppDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLocation(location: Location): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -49,6 +50,9 @@ interface AppDao {
     @Transaction
     @Query("SELECT * FROM visit WHERE check_out_at IS NULL ORDER BY check_in_at DESC")
     fun getAllActiveVisitWithLocation(): LiveData<List<VisitWithLocation>>
+
+    @Query("SELECT * FROM visit WHERE check_out_at IS NULL AND location_id = :locationId")
+    fun getActiveVisitWithLocationId(locationId:String) : LiveData<List<VisitWithLocation>>
 }
 
 @Database(entities = [Location::class, Visit::class], version = 3)

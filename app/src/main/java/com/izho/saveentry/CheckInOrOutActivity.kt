@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.webkit.WebView
 import android.widget.ImageView
@@ -22,6 +23,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.VisitWithLocation
@@ -66,6 +68,20 @@ class CheckInOrOutActivity : AppCompatActivity() {
         val url = intent.extras?.getString("url")
         val visitId = intent.extras?.getLong("visitId")
         var visitWithLocation:VisitWithLocation? = null
+
+        var receivedResponse = false
+
+        if(action == "checkIn") {
+            val allActiveVisit = getAppDatabase(this, resetDb = false).dao.getActiveVisitWithLocationId(SafeEntryParser.getLocationId(url!!))
+            allActiveVisit.observe(this, Observer {
+                allActiveVisit.removeObservers(this)
+                Log.v("repeated", it.size.toString())
+                if(it.size > 0) {
+                    Toast.makeText(this, "You already checked-in to this location", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            })
+        }
 
         if (visitId != null) {
             GlobalScope.launch {
@@ -121,7 +137,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
 
                 var venueName = intent.extras?.getString("venueName") ?: ""
                 if (venueName == "") {//"https://temperaturepass.ndi-api.gov.sg/login/PROD-200604346E-11177-NUSUTR-SE"
-                    val urlParams = url.substring(CheckInOrOutViewModel.QR_URL_PREFIX.length)
+                    val urlParams = SafeEntryParser.getLocationId(url)
                     //URL format: PROD | ALPHA-NUMERIC-BLK+ | Place name | "SE"*
                     val blocks = urlParams.split("-")
                     if(blocks[blocks.size-1] == "SE") {
@@ -135,7 +151,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                 //location id is the params or path of url, i.e. everything starting from "PROD-...."
                 var locationId = intent.extras?.getString("locationId") ?: ""
                 if (locationId == "") {
-                    locationId = url.substring(CheckInOrOutViewModel.QR_URL_PREFIX.length)
+                    locationId = SafeEntryParser.getLocationId(url)
                 }
 
                 offlineCheckInOrOut.viewTreeObserver.addOnGlobalLayoutListener(object:ViewTreeObserver.OnGlobalLayoutListener {
