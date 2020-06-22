@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnTouchListener
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
@@ -18,6 +19,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.common.collect.ImmutableList
+import okhttp3.internal.immutableListOf
 
 
 const val TUTORIAL_POPUP_WIDTH = 900
@@ -54,6 +57,11 @@ class TutorialManager(val activity: AppCompatActivity) {
                 Prefs.setHasSeenTutorial(activity, true)
                 popupWindow.dismiss()
             } else {
+                if ((viewPager.adapter as TutorialPagerAdapter).showHow[viewPager.currentItem+1]) {
+                    popupView.findViewById<Button>(R.id.show_me).visibility= View.VISIBLE
+                } else {
+                    popupView.findViewById<Button>(R.id.show_me).visibility= View.GONE
+                }
                 if (viewPager.currentItem == viewPager.adapter!!.itemCount-2) {
                     (it as Button).setText("Done")
                 }
@@ -75,26 +83,37 @@ class TutorialManager(val activity: AppCompatActivity) {
     }
 
     class TutorialPagerAdapter(activity:AppCompatActivity) : FragmentStateAdapter(activity) {
+        val showHow = immutableListOf(true, true, false)
+
         override fun getItemCount(): Int {
-            return 2
+            return showHow.size
         }
 
         override fun createFragment(position: Int): Fragment {
             return when(position) {
                 0 -> WidgetTutorialFragment()
                 1 -> TileTutorialFragment()
+                2 -> AddToFavFragment()
                 else -> throw ClassNotFoundException("Unknown type of fragment")
             }
         }
     }
 
     open class TutorialFragment : Fragment() {
+        companion object {
+            var showHow = true
+        }
+
         override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
         ): View? {
             return inflater.inflate(R.layout.fragment_tutorial, container, false)
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
         }
     }
 
@@ -108,6 +127,17 @@ class TutorialManager(val activity: AppCompatActivity) {
     class TileTutorialFragment : TutorialFragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(R.drawable.check_in_lock))
+            super.onViewCreated(view, savedInstanceState)
+        }
+    }
+
+    class AddToFavFragment : TutorialFragment() {
+        companion object {
+            var showHow = false
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(R.drawable.add_to_fav))
             super.onViewCreated(view, savedInstanceState)
         }
     }
