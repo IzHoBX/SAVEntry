@@ -92,7 +92,7 @@ class HomeWidgetProvider : AppWidgetProvider(), LifecycleOwner {
                         val locationId = sp.getString("locationId"+iconPosition.toString(), "")
                         val organization = sp.getString("organization"+iconPosition.toString(), "")
 
-                        if(url != "" && venueName != "" && locationId != "" && organization != "") {
+                        if(url != "" && venueName != "" && locationId != "") {
                             val intent = Intent(context, CheckInOrOutActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
                             intent.putExtra("url", url)

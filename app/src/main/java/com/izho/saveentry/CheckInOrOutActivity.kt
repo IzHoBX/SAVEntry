@@ -65,7 +65,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
 
         action = intent.extras?.getString("action") ?: "checkIn"
 
-        val url = intent.extras?.getString("url")
+        var url = intent.extras?.getString("url")
         val visitId = intent.extras?.getLong("visitId")
         var visitWithLocation:VisitWithLocation? = null
 
@@ -84,6 +84,9 @@ class CheckInOrOutActivity : AppCompatActivity() {
         if (visitId != null) {
             GlobalScope.launch {
                 visitWithLocation = getAppDatabase(this@CheckInOrOutActivity, resetDb = false).dao.getVisitWithLocationById(visitId)
+                if(visitWithLocation != null && url == null) {
+                    url = visitWithLocation!!.location.url
+                }
             }
         }
 
@@ -97,6 +100,10 @@ class CheckInOrOutActivity : AppCompatActivity() {
             it.setDisplayShowHomeEnabled(true)
         }
 
+        if (url == null) {
+            Toast.makeText(this, "Unable to get data from QR code. Please try again.", Toast.LENGTH_SHORT).show()
+            finish()
+        }
         val factory = CheckInOrOutViewModel.Factory(application, url!!, action, visitId)
         viewModel = ViewModelProvider(this, factory).get(CheckInOrOutViewModel::class.java)
 
@@ -122,8 +129,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                 loadUrl(url)
             }
         } else {
-            offlineCheckInOrOut(toolbar, url, visitId)
-
+            offlineCheckInOrOut(toolbar, url!!, visitId)
         }
 
         val baseLayout = findViewById<View>(R.id.constraint_layout_check_in_or_out)
@@ -189,7 +195,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
             if(it) {
                 Log.v("livedata", it.toString())
                 viewModel._networkExecutionError.removeObservers(this)
-                offlineCheckInOrOut(toolbar, url, visitId)
+                offlineCheckInOrOut(toolbar, url!!, visitId)
             }
         })
     }
@@ -199,7 +205,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
         url: String,
         visitId: Long?
     ) {
-        var newLayoutParamms = ConstraintLayout.LayoutParams(
+        val newLayoutParamms = ConstraintLayout.LayoutParams(
             ConstraintLayout.LayoutParams.WRAP_CONTENT,
             ConstraintLayout.LayoutParams.WRAP_CONTENT
         )
