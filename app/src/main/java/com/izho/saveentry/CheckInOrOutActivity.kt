@@ -38,7 +38,6 @@ fun Date.toDisplayString() : String {
     return simpleDateFormat.format(this)
 }
 
-
 class CheckInOrOutActivity : AppCompatActivity() {
     private lateinit var viewModel: CheckInOrOutViewModel
     private lateinit var action: String
@@ -88,7 +87,15 @@ class CheckInOrOutActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory).get(CheckInOrOutViewModel::class.java)
 
         webView = findViewById(R.id.webview_browser)
+        /*conditions to use online
+        1. has internet
+        2. has no internet, and the current action is check out, but the visit was checked in online --> must checked out online to ensure server logged user as checked out
+         */
         if(isInternetAvailable() || (visitWithLocation != null && !(visitWithLocation!!.visit.isOfflineCheckIn))) {
+            if(!isInternetAvailable()) {
+                // condition 2
+                Toast.makeText(this, "You checked in online previously. Hence you must check out online as well. Please turn on internet connection.", Toast.LENGTH_LONG).show()
+            }
             webView.apply {
                 @SuppressLint("SetJavaScriptEnabled")
                 settings.javaScriptEnabled = true
@@ -173,7 +180,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setOngoing(true)
                             .setContentIntent(pendingIntent)
-                            .setAutoCancel(true)
+                            .setAutoCancel(false)
 
                         with(NotificationManagerCompat.from(this)) {
                             notify(data.visit.notificationId, builder.build())
