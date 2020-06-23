@@ -1,15 +1,12 @@
-package com.izho.saveentry
+package com.izho.saveentry.utils
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnTouchListener
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
@@ -19,7 +16,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.google.common.collect.ImmutableList
+import com.izho.saveentry.R
 import okhttp3.internal.immutableListOf
 
 
@@ -50,7 +47,10 @@ class TutorialManager(val activity: AppCompatActivity) {
 
         val viewPager = popupView.findViewById<ViewPager2>(viewPagerId)
         viewPager.isUserInputEnabled = false
-        viewPager.adapter = TutorialPagerAdapter(activity)
+        viewPager.adapter =
+            TutorialPagerAdapter(
+                activity
+            )
 
         popupView.findViewById<Button>(R.id.next).setOnClickListener {
             if(viewPager.currentItem == viewPager.adapter!!.itemCount-1) {
@@ -119,14 +119,18 @@ class TutorialManager(val activity: AppCompatActivity) {
 
     class WidgetTutorialFragment : TutorialFragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(R.drawable.check_in_home))
+            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(
+                R.drawable.check_in_home
+            ))
             super.onViewCreated(view, savedInstanceState)
         }
     }
 
     class TileTutorialFragment : TutorialFragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(R.drawable.check_in_lock))
+            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(
+                R.drawable.check_in_lock
+            ))
             super.onViewCreated(view, savedInstanceState)
         }
     }
@@ -137,7 +141,9 @@ class TutorialManager(val activity: AppCompatActivity) {
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(R.drawable.add_to_fav))
+            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(
+                R.drawable.add_to_fav
+            ))
             super.onViewCreated(view, savedInstanceState)
         }
     }

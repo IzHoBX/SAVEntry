@@ -44,9 +44,8 @@ import com.izho.saveentry.camera.CameraSourcePreview
 import com.izho.saveentry.camera.GraphicOverlay
 import com.izho.saveentry.camera.WorkflowModel
 import com.izho.saveentry.camera.WorkflowModel.WorkflowState
-import okhttp3.internal.immutableListOf
+import com.izho.saveentry.utils.SafeEntryHelper
 import java.io.IOException
-import java.util.jar.Manifest
 
 const val CAMERA_PERMISSSION_REQUEST_CODE = 5
 
@@ -236,13 +235,14 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
                 && URLUtil.isValidUrl(barcode.rawValue)) {
 
                 val url = Uri.parse(barcode.rawValue)
-                if (url.host in BACKEND_HOST) {
+                if (url.host in SafeEntryHelper.getQRCodeHost()) {
                     val intent = Intent(this, CheckInOrOutActivity::class.java)
                     intent.putExtra("url", barcode.rawValue)
                     intent.putExtra("action", "checkIn")
                     startActivity(intent)
                     finish()
                 } else {
+                    //TODO: log to crashlytics
                     preview?.let {
                         Snackbar.make(it, "Invalid URL", Snackbar.LENGTH_SHORT).show()
                         startCameraPreview()
@@ -254,6 +254,5 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
 
     companion object {
         private const val TAG = "LiveBarcodeActivity"
-        private val BACKEND_HOST = immutableListOf("temperaturepass.ndi-api.gov.sg", "www.safeentry-qr.gov.sg")
     }
 }

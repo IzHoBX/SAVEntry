@@ -19,7 +19,7 @@ package com.izho.saveentry.settings
 import android.hardware.Camera
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
-import com.izho.saveentry.Utils
+import com.izho.saveentry.utils.Utils
 import com.izho.saveentry.camera.CameraSource
 import com.izho.saveentry.R
 import java.util.HashMap

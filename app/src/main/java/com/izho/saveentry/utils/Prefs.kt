@@ -1,4 +1,4 @@
-package com.izho.saveentry
+package com.izho.saveentry.utils
 
 import android.content.Context
 

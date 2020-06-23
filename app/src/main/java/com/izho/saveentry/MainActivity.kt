@@ -2,17 +2,11 @@ package com.izho.saveentry
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -20,6 +14,10 @@ import com.izho.saveentry.data.getAppDatabase
 import com.izho.saveentry.ui.ActiveFragment
 import com.izho.saveentry.ui.FavoritesFragment
 import com.izho.saveentry.ui.HistoryFragment
+import com.izho.saveentry.utils.Prefs
+import com.izho.saveentry.utils.SafeEntryHelper
+import com.izho.saveentry.utils.TutorialManager
+import com.izho.saveentry.utils.Utils
 
 private val TAB_LABELS = arrayOf("Active", "History", "Favorites")
 class MainActivity : AppCompatActivity() {
@@ -51,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                 TutorialManager(this).showTutorial(R.id.view_pager)
             }
         }
+        SafeEntryHelper.update()
     }
 
     override fun onResume() {
