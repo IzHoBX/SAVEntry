@@ -37,6 +37,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.base.Objects
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.izho.saveentry.barcode.BarcodeProcessor
 import com.izho.saveentry.barcode.BarcodeResultFragment
 import com.izho.saveentry.camera.CameraSource
@@ -236,20 +237,31 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
 
                 val url = Uri.parse(barcode.rawValue)
                 if (url.host in SafeEntryHelper.getQRCodeHost()) {
-                    val intent = Intent(this, CheckInOrOutActivity::class.java)
-                    intent.putExtra("url", barcode.rawValue)
-                    intent.putExtra("action", "checkIn")
-                    startActivity(intent)
-                    finish()
+                    startCheckInOrOutActivity(barcode)
                 } else {
-                    //TODO: log to crashlytics
-                    preview?.let {
-                        Snackbar.make(it, "Invalid URL", Snackbar.LENGTH_SHORT).show()
-                        startCameraPreview()
+                    val toDoWhenPulled = Runnable {
+                        if (url.host in SafeEntryHelper.getQRCodeHost()) {
+                            startCheckInOrOutActivity(barcode)
+                        } else {
+                            //TODO: log to crashlytics
+                            preview?.let {
+                                Snackbar.make(it, "Invalid URL", Snackbar.LENGTH_SHORT).show()
+                                startCameraPreview()
+                            }
+                        }
                     }
+                    SafeEntryHelper.forceUpdate(toDoWhenPulled)
                 }
             }
         })
+    }
+
+    private fun startCheckInOrOutActivity(barcode: FirebaseVisionBarcode) {
+        val intent = Intent(this, CheckInOrOutActivity::class.java)
+        intent.putExtra("url", barcode.rawValue)
+        intent.putExtra("action", "checkIn")
+        startActivity(intent)
+        finish()
     }
 
     companion object {

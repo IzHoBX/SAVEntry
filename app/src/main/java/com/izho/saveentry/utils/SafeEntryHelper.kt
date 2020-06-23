@@ -99,5 +99,13 @@ class SafeEntryHelper {
             }
         }
 
+        fun forceUpdate(run:Runnable) {
+            remoteConfig.fetch(0).addOnCompleteListener {
+                remoteConfig.activate().addOnCompleteListener {
+                    run.run()
+                }
+            }
+        }
+
     }
 }
