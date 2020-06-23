@@ -37,6 +37,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.base.Objects
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.izho.saveentry.barcode.BarcodeProcessor
 import com.izho.saveentry.barcode.BarcodeResultFragment
@@ -47,6 +48,7 @@ import com.izho.saveentry.camera.WorkflowModel
 import com.izho.saveentry.camera.WorkflowModel.WorkflowState
 import com.izho.saveentry.utils.SafeEntryHelper
 import java.io.IOException
+import java.lang.Exception
 
 const val CAMERA_PERMISSSION_REQUEST_CODE = 5
 
@@ -243,11 +245,11 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
                         if (url.host in SafeEntryHelper.getQRCodeHost()) {
                             startCheckInOrOutActivity(barcode)
                         } else {
-                            //TODO: log to crashlytics
                             preview?.let {
                                 Snackbar.make(it, "Invalid URL", Snackbar.LENGTH_SHORT).show()
                                 startCameraPreview()
                             }
+                            FirebaseCrashlytics.getInstance().recordException(NotSafeEntryQRException(url.host ?: ""))
                         }
                     }
                     SafeEntryHelper.forceUpdate(toDoWhenPulled)
@@ -267,4 +269,6 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
     companion object {
         private const val TAG = "LiveBarcodeActivity"
     }
+
+    class NotSafeEntryQRException(val url:String) : Exception("Unknown url: $url")
 }

@@ -1,8 +1,10 @@
 package com.izho.saveentry.utils
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchThrottledException
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.izho.saveentry.LiveBarcodeScanningActivity
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
@@ -56,7 +58,9 @@ class SafeEntryHelper {
                 }
             }
             if (prefixChosen == "") {
-                //TODO: log to crashlytics
+                FirebaseCrashlytics.getInstance().recordException(
+                    LiveBarcodeScanningActivity.NotSafeEntryQRException("$url prefix")
+                )
                 return ""
             }
             return url.substring(prefixChosen.length)

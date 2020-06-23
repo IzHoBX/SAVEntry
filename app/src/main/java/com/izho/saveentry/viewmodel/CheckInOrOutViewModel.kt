@@ -88,7 +88,6 @@ class CheckInOrOutViewModel(app: Application,
                         req = req.addHeader("Cookie", cookies)
                     }
 
-                    // TODO: Handle exception here.
                     try {
                         val response = this@CheckInOrOutViewModel
                             .httpClient.newCall(req.build()).execute()
