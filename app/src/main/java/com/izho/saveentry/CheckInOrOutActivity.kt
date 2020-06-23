@@ -65,11 +65,9 @@ class CheckInOrOutActivity : AppCompatActivity() {
 
         action = intent.extras?.getString("action") ?: "checkIn"
 
-        val url = intent.extras?.getString("url")
+        var url = intent.extras?.getString("url")
         val visitId = intent.extras?.getLong("visitId")
         var visitWithLocation:VisitWithLocation? = null
-
-        var receivedResponse = false
 
         if(action == "checkIn") {
             val allActiveVisit = getAppDatabase(this, resetDb = false).dao.getActiveVisitWithLocationId(SafeEntryParser.getLocationId(url!!))
@@ -86,6 +84,9 @@ class CheckInOrOutActivity : AppCompatActivity() {
         if (visitId != null) {
             GlobalScope.launch {
                 visitWithLocation = getAppDatabase(this@CheckInOrOutActivity, resetDb = false).dao.getVisitWithLocationById(visitId)
+                if(visitWithLocation != null && url == null) {
+                    url = visitWithLocation!!.location.url
+                }
             }
         }
 
@@ -99,6 +100,10 @@ class CheckInOrOutActivity : AppCompatActivity() {
             it.setDisplayShowHomeEnabled(true)
         }
 
+        if (url == null) {
+            Toast.makeText(this, "Unable to get data from QR code. Please try again.", Toast.LENGTH_SHORT).show()
+            finish()
+        }
         val factory = CheckInOrOutViewModel.Factory(application, url!!, action, visitId)
         viewModel = ViewModelProvider(this, factory).get(CheckInOrOutViewModel::class.java)
 
@@ -124,61 +129,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                 loadUrl(url)
             }
         } else {
-            var newLayoutParamms = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
-            newLayoutParamms.topToBottom = (webView.layoutParams as ConstraintLayout.LayoutParams).topToBottom
-            webView.destroy()
-            val container = findViewById<ConstraintLayout>(R.id.constraint_layout_check_in_or_out)
-            val offlineCheckInOrOut:View = this.layoutInflater.inflate(R.layout.offline_checkin, container, false)
-            container.addView(offlineCheckInOrOut, newLayoutParamms)
-            if(action == "checkIn") {
-                toolbar.title = "Offline check in..."
-                offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView).setImageDrawable(getDrawable(R.drawable.checkin_screenshot))
-                Toast.makeText(this, "No internet, using offline check in", Toast.LENGTH_SHORT).show()
-
-                var venueName = intent.extras?.getString("venueName") ?: ""
-                if (venueName == "") {//"https://temperaturepass.ndi-api.gov.sg/login/PROD-200604346E-11177-NUSUTR-SE"
-                    val urlParams = SafeEntryParser.getLocationId(url)
-                    //URL format: PROD | ALPHA-NUMERIC-BLK+ | Place name | "SE"*
-                    val blocks = urlParams.split("-")
-                    if(blocks[blocks.size-1] == "SE") {
-                        venueName = blocks[blocks.size-2]
-                    } else {
-                        venueName = blocks[blocks.size-2] + " " + blocks[blocks.size-1]
-                    }
-                }
-                offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text = venueName
-
-                //location id is the params or path of url, i.e. everything starting from "PROD-...."
-                var locationId = intent.extras?.getString("locationId") ?: ""
-                if (locationId == "") {
-                    locationId = SafeEntryParser.getLocationId(url)
-                }
-
-                offlineCheckInOrOut.viewTreeObserver.addOnGlobalLayoutListener(object:ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        viewModel.checkInToLocation(offlineCheckInOrOut, Location(
-                            locationId,
-                            intent.extras?.getString("organization") ?: "",
-                            venueName,
-                            intent.extras?.getString("url") ?: ""
-                        ), true)
-                        offlineCheckInOrOut.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    }
-                })
-            } else {
-                toolbar.title = "Offline check out..."
-                offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView).setImageDrawable(getDrawable(R.drawable.checkout_screenshot))
-                Toast.makeText(this, "No internet, using offline check out", Toast.LENGTH_SHORT).show()
-                viewModel.checkOutOfLocation(offlineCheckInOrOut)
-                GlobalScope.launch {
-                    if (visitId != null) {
-                        offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text = getAppDatabase(this@CheckInOrOutActivity, resetDb = false).dao.getVisitWithLocationById(visitId).location.venueName
-                    }
-                }
-            }
-
-            offlineCheckInOrOut.findViewById<TextView>(R.id.time).text = Date().toDisplayString()
-
+            offlineCheckInOrOut(toolbar, url!!, visitId)
         }
 
         val baseLayout = findViewById<View>(R.id.constraint_layout_check_in_or_out)
@@ -239,6 +190,89 @@ class CheckInOrOutActivity : AppCompatActivity() {
         viewModel._action.observe(this, Observer { newAction ->
             action = newAction
         })
+
+        viewModel._networkExecutionError.observe(this, Observer {
+            if(it) {
+                Log.v("livedata", it.toString())
+                viewModel._networkExecutionError.removeObservers(this)
+                offlineCheckInOrOut(toolbar, url!!, visitId)
+            }
+        })
+    }
+
+    private fun offlineCheckInOrOut(
+        toolbar: Toolbar,
+        url: String,
+        visitId: Long?
+    ) {
+        val newLayoutParamms = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT
+        )
+        newLayoutParamms.topToBottom =
+            (webView.layoutParams as ConstraintLayout.LayoutParams).topToBottom
+        webView.destroy()
+        val container = findViewById<ConstraintLayout>(R.id.constraint_layout_check_in_or_out)
+        val offlineCheckInOrOut: View =
+            this.layoutInflater.inflate(R.layout.offline_checkin, container, false)
+        container.addView(offlineCheckInOrOut, newLayoutParamms)
+        if (action == "checkIn") {
+            toolbar.title = "Offline check in..."
+            offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView)
+                .setImageDrawable(getDrawable(R.drawable.checkin_screenshot))
+            Toast.makeText(this, "No internet, using offline check in", Toast.LENGTH_SHORT).show()
+
+            var venueName = intent.extras?.getString("venueName") ?: ""
+            if (venueName == "") {//"https://temperaturepass.ndi-api.gov.sg/login/PROD-200604346E-11177-NUSUTR-SE"
+                val urlParams = SafeEntryParser.getLocationId(url)
+                //URL format: PROD | ALPHA-NUMERIC-BLK+ | Place name | "SE"*
+                val blocks = urlParams.split("-")
+                if (blocks[blocks.size - 1] == "SE") {
+                    venueName = blocks[blocks.size - 2]
+                } else {
+                    venueName = blocks[blocks.size - 2] + " " + blocks[blocks.size - 1]
+                }
+            }
+            offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text = venueName
+
+            //location id is the params or path of url, i.e. everything starting from "PROD-...."
+            var locationId = intent.extras?.getString("locationId") ?: ""
+            if (locationId == "") {
+                locationId = SafeEntryParser.getLocationId(url)
+            }
+
+            offlineCheckInOrOut.viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    viewModel.checkInToLocation(
+                        offlineCheckInOrOut, Location(
+                            locationId,
+                            intent.extras?.getString("organization") ?: "",
+                            venueName,
+                            intent.extras?.getString("url") ?: ""
+                        ), true
+                    )
+                    offlineCheckInOrOut.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+            })
+        } else {
+            toolbar.title = "Offline check out..."
+            offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView)
+                .setImageDrawable(getDrawable(R.drawable.checkout_screenshot))
+            Toast.makeText(this, "No internet, using offline check out", Toast.LENGTH_SHORT).show()
+            viewModel.checkOutOfLocation(offlineCheckInOrOut)
+            GlobalScope.launch {
+                if (visitId != null) {
+                    offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text =
+                        getAppDatabase(
+                            this@CheckInOrOutActivity,
+                            resetDb = false
+                        ).dao.getVisitWithLocationById(visitId).location.venueName
+                }
+            }
+        }
+
+        offlineCheckInOrOut.findViewById<TextView>(R.id.time).text = Date().toDisplayString()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
