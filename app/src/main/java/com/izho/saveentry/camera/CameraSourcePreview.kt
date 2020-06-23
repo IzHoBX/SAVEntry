@@ -23,7 +23,7 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.widget.FrameLayout
 import com.google.android.gms.common.images.Size
-import com.izho.saveentry.Utils
+import com.izho.saveentry.utils.Utils
 import com.izho.saveentry.R
 import java.io.IOException
 

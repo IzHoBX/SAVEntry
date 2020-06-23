@@ -14,7 +14,7 @@ import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.VisitWithLocation
 import com.izho.saveentry.data.getAppDatabase
 import com.izho.saveentry.SAVEntryApplication
-import com.izho.saveentry.SafeEntryParser
+import com.izho.saveentry.utils.SafeEntryHelper
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.internal.immutableListOf
 import java.io.File
 import java.util.*
 
@@ -74,7 +73,7 @@ class CheckInOrOutViewModel(app: Application,
                 // Intercept calls to backend so that we can pick out the details about the place we
                 // are signing in from.
                 if (currentLocation.value == null && requestHost != null
-                    && requestHost in BACKEND_HOST && request.url.path in BACKEND_BUILDING_PATH
+                    && requestHost in SafeEntryHelper.getBackendHost() && request.url.path in SafeEntryHelper.getBackendBuildingPath()
                 ) {
                     // Copy over all the headers
                     var req = Request.Builder().url(request.url.toString())
@@ -89,7 +88,6 @@ class CheckInOrOutViewModel(app: Application,
                         req = req.addHeader("Cookie", cookies)
                     }
 
-                    // TODO: Handle exception here.
                     try {
                         val response = this@CheckInOrOutViewModel
                             .httpClient.newCall(req.build()).execute()
@@ -106,10 +104,10 @@ class CheckInOrOutViewModel(app: Application,
                     } catch (e:Throwable) {
                         //this is just in-case. By right if our fetch encounter error, webview will also show error and user will take action from there
                         _currentLocation.postValue(
-                            Location(locationId, "UKNOWN", SafeEntryParser.getLocationId(url), url))
+                            Location(locationId, "UKNOWN", SafeEntryHelper.getLocationId(url), url))
                         _networkExecutionError.postValue(true)
                     }
-                } else if (_action.value == "checkIn" && request?.url?.path == CHECKOUT_PAGE_ICON_PATH) {
+                } else if (_action.value == "checkIn" && request?.url?.path in SafeEntryHelper.getCheckoutPageIconPath()) {
                     if(view!=null) {
                         _action.postValue("checkOut")
                         checkOutOfLocation(view)
@@ -323,8 +321,5 @@ class CheckInOrOutViewModel(app: Application,
 
     companion object {
         private const val TAG = "CheckInOrOutViewModel"
-        private val BACKEND_HOST = immutableListOf("backend.temperaturepass.ndi-api.gov.sg", "backend.safeentry-qr.gov.sg")
-        private val BACKEND_BUILDING_PATH = immutableListOf("/api/v1/building", "/api/v2/building")
-        private val CHECKOUT_PAGE_ICON_PATH = "/assets/images/successpage-tickblue-icon.svg"
     }
 }

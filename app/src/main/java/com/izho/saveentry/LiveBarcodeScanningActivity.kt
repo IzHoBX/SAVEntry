@@ -37,6 +37,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.base.Objects
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.izho.saveentry.barcode.BarcodeProcessor
 import com.izho.saveentry.barcode.BarcodeResultFragment
 import com.izho.saveentry.camera.CameraSource
@@ -44,8 +46,9 @@ import com.izho.saveentry.camera.CameraSourcePreview
 import com.izho.saveentry.camera.GraphicOverlay
 import com.izho.saveentry.camera.WorkflowModel
 import com.izho.saveentry.camera.WorkflowModel.WorkflowState
+import com.izho.saveentry.utils.SafeEntryHelper
 import java.io.IOException
-import java.util.jar.Manifest
+import java.lang.Exception
 
 const val CAMERA_PERMISSSION_REQUEST_CODE = 5
 
@@ -235,24 +238,37 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
                 && URLUtil.isValidUrl(barcode.rawValue)) {
 
                 val url = Uri.parse(barcode.rawValue)
-                if (url.host == BACKEND_HOST) {
-                    val intent = Intent(this, CheckInOrOutActivity::class.java)
-                    intent.putExtra("url", barcode.rawValue)
-                    intent.putExtra("action", "checkIn")
-                    startActivity(intent)
-                    finish()
+                if (url.host in SafeEntryHelper.getQRCodeHost()) {
+                    startCheckInOrOutActivity(barcode)
                 } else {
-                    preview?.let {
-                        Snackbar.make(it, "Invalid URL", Snackbar.LENGTH_SHORT).show()
-                        startCameraPreview()
+                    val toDoWhenPulled = Runnable {
+                        if (url.host in SafeEntryHelper.getQRCodeHost()) {
+                            startCheckInOrOutActivity(barcode)
+                        } else {
+                            preview?.let {
+                                Snackbar.make(it, "Invalid URL", Snackbar.LENGTH_SHORT).show()
+                                startCameraPreview()
+                            }
+                            FirebaseCrashlytics.getInstance().recordException(NotSafeEntryQRException(url.host ?: ""))
+                        }
                     }
+                    SafeEntryHelper.forceUpdate(toDoWhenPulled)
                 }
             }
         })
     }
 
+    private fun startCheckInOrOutActivity(barcode: FirebaseVisionBarcode) {
+        val intent = Intent(this, CheckInOrOutActivity::class.java)
+        intent.putExtra("url", barcode.rawValue)
+        intent.putExtra("action", "checkIn")
+        startActivity(intent)
+        finish()
+    }
+
     companion object {
         private const val TAG = "LiveBarcodeActivity"
-        private const val BACKEND_HOST = "temperaturepass.ndi-api.gov.sg"
     }
+
+    class NotSafeEntryQRException(val url:String) : Exception("Unknown url: $url")
 }

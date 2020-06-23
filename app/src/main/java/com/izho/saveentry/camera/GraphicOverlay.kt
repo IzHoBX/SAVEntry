@@ -22,7 +22,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import com.izho.saveentry.Utils
+import com.izho.saveentry.utils.Utils
 import java.util.ArrayList
 
 /**

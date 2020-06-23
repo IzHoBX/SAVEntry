@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.izho.saveentry
+package com.izho.saveentry.utils
 
 import androidx.core.content.ContextCompat.checkSelfPermission
 
