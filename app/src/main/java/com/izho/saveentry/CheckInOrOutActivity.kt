@@ -28,6 +28,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.VisitWithLocation
 import com.izho.saveentry.data.getAppDatabase
+import com.izho.saveentry.utils.SafeEntryHelper
 import com.izho.saveentry.viewmodel.CheckInOrOutViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -70,7 +71,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
         var visitWithLocation:VisitWithLocation? = null
 
         if(action == "checkIn") {
-            val allActiveVisit = getAppDatabase(this, resetDb = false).dao.getActiveVisitWithLocationId(SafeEntryParser.getLocationId(url!!))
+            val allActiveVisit = getAppDatabase(this, resetDb = false).dao.getActiveVisitWithLocationId(SafeEntryHelper.getLocationId(url!!))
             allActiveVisit.observe(this, Observer {
                 allActiveVisit.removeObservers(this)
                 Log.v("repeated", it.size.toString())
@@ -224,7 +225,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
 
             var venueName = intent.extras?.getString("venueName") ?: ""
             if (venueName == "") {//"https://temperaturepass.ndi-api.gov.sg/login/PROD-200604346E-11177-NUSUTR-SE"
-                val urlParams = SafeEntryParser.getLocationId(url)
+                val urlParams = SafeEntryHelper.getLocationId(url)
                 //URL format: PROD | ALPHA-NUMERIC-BLK+ | Place name | "SE"*
                 val blocks = urlParams.split("-")
                 if (blocks[blocks.size - 1] == "SE") {
@@ -238,7 +239,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
             //location id is the params or path of url, i.e. everything starting from "PROD-...."
             var locationId = intent.extras?.getString("locationId") ?: ""
             if (locationId == "") {
-                locationId = SafeEntryParser.getLocationId(url)
+                locationId = SafeEntryHelper.getLocationId(url)
             }
 
             offlineCheckInOrOut.viewTreeObserver.addOnGlobalLayoutListener(object :
