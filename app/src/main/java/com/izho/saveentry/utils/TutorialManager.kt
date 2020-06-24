@@ -3,11 +3,8 @@ package com.izho.saveentry.utils
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.OnTouchListener
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.PopupWindow
@@ -35,9 +32,6 @@ class TutorialManager(val activity: AppCompatActivity) {
 
         //Create a window with our parameters
         val popupWindow = PopupWindow(popupView, width, height, focusable)
-
-        //Set the location of the window on the screen
-        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
 
         // to stop prevent dismissal due to touch outside window
         popupWindow.setTouchInterceptor(OnTouchListener { view, motionEvent ->
@@ -80,6 +74,12 @@ class TutorialManager(val activity: AppCompatActivity) {
             startActivity(activity, i, null)
         }
 
+        try {
+            //Set the location of the window on the screen
+            popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
+        } catch (e:WindowManager.BadTokenException) {//activity terminated before the popup is shown
+            return
+        }
     }
 
     class TutorialPagerAdapter(activity:AppCompatActivity) : FragmentStateAdapter(activity) {
