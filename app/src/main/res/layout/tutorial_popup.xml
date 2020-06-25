@@ -15,7 +15,7 @@
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="55dp"/>
 
 
         <LinearLayout
@@ -23,7 +23,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:gravity="right"
-            android:layout_marginTop="625dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="10dp">
 
             <Button
