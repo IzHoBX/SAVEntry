@@ -26,6 +26,7 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.WindowManager
 import com.google.android.gms.common.images.Size
+import com.google.android.material.snackbar.Snackbar
 import com.izho.saveentry.utils.Utils
 import com.izho.saveentry.settings.PreferenceUtils
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
@@ -163,7 +164,11 @@ class CameraSource(private val graphicOverlay: GraphicOverlay) {
     fun updateFlashMode(flashMode: String) {
         val parameters = camera?.parameters
         parameters?.flashMode = flashMode
-        camera?.parameters = parameters
+        try {
+            camera?.parameters = parameters
+        } catch (e:RuntimeException) { //for https://github.com/IzHoBX/SAVEntry/issues/24
+            Snackbar.make(graphicOverlay, "Toggling flash is not supported on your device yet.", Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     /**
