@@ -2,6 +2,7 @@ package com.izho.saveentry
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +15,7 @@ import com.izho.saveentry.data.getAppDatabase
 import com.izho.saveentry.ui.ActiveFragment
 import com.izho.saveentry.ui.FavoritesFragment
 import com.izho.saveentry.ui.HistoryFragment
-import com.izho.saveentry.utils.Prefs
-import com.izho.saveentry.utils.SafeEntryHelper
-import com.izho.saveentry.utils.TutorialManager
-import com.izho.saveentry.utils.Utils
+import com.izho.saveentry.utils.*
 
 private val TAB_LABELS = arrayOf("Active", "History", "Favorites")
 class MainActivity : AppCompatActivity() {
