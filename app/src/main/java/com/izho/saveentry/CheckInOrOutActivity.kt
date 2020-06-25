@@ -113,11 +113,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
         1. has internet
         2. has no internet, and the current action is check out, but the visit was checked in online --> must checked out online to ensure server logged user as checked out
          */
-        if(isInternetAvailable() || (visitWithLocation != null && !(visitWithLocation!!.visit.isOfflineCheckIn))) {
-            if(!isInternetAvailable()) {
-                // condition 2
-                Toast.makeText(this, "You checked in online previously. Hence you must check out online as well. Please turn on internet connection.", Toast.LENGTH_LONG).show()
-            }
+        if(isInternetAvailable()) {
             webView.apply {
                 @SuppressLint("SetJavaScriptEnabled")
                 settings.javaScriptEnabled = true
@@ -130,7 +126,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                 loadUrl(url)
             }
         } else {
-            offlineCheckInOrOut(toolbar, url!!, visitId)
+            offlineCheckInOrOut(toolbar, url!!, visitId, visitWithLocation)
         }
 
         val baseLayout = findViewById<View>(R.id.constraint_layout_check_in_or_out)
@@ -196,7 +192,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
             if(it) {
                 Log.v("livedata", it.toString())
                 viewModel._networkExecutionError.removeObservers(this)
-                offlineCheckInOrOut(toolbar, url!!, visitId)
+                offlineCheckInOrOut(toolbar, url!!, visitId, visitWithLocation)
             }
         })
     }
@@ -204,8 +200,14 @@ class CheckInOrOutActivity : AppCompatActivity() {
     private fun offlineCheckInOrOut(
         toolbar: Toolbar,
         url: String,
-        visitId: Long?
+        visitId: Long?,
+        visitWithLocation:VisitWithLocation?
     ) {
+        if (visitWithLocation != null && !(visitWithLocation!!.visit.isOfflineCheckIn)) {
+            Toast.makeText(this, "You checked in online previously. Hence you must check out online as well. Please turn on internet connection.", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
         val newLayoutParamms = ConstraintLayout.LayoutParams(
             ConstraintLayout.LayoutParams.WRAP_CONTENT,
             ConstraintLayout.LayoutParams.WRAP_CONTENT
