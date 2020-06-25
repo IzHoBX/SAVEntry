@@ -33,14 +33,7 @@ class TutorialManager(val activity: AppCompatActivity) {
         //Create a window with our parameters
         val popupWindow = PopupWindow(popupView, width, height, focusable)
 
-        // to stop prevent dismissal due to touch outside window
-        popupWindow.setTouchInterceptor(OnTouchListener { view, motionEvent ->
-            if (motionEvent.x < 0 || motionEvent.x > view.width) return@OnTouchListener true
-            if (motionEvent.y < 0 || motionEvent.y > view.height) true else false
-        })
-
         val viewPager = popupView.findViewById<ViewPager2>(viewPagerId)
-        viewPager.isUserInputEnabled = false
         viewPager.adapter =
             TutorialPagerAdapter(
                 activity
