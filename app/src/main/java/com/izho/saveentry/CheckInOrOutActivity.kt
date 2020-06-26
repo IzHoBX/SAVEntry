@@ -147,6 +147,9 @@ class CheckInOrOutActivity : AppCompatActivity() {
                         intent.putExtra("visitId", data.visit.visitId)
                         intent.putExtra("url", data.location.url)
 
+                        val mainActivityIntent = Intent(this, MainActivity::class.java)
+                        val mainActivityPendingIntent = PendingIntent.getActivity(this, 0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
                         val pendingIntent = TaskStackBuilder.create(this).run {
                             addNextIntentWithParentStack(intent)
                             getPendingIntent(data.visit.notificationId, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -163,6 +166,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setOngoing(true)
                             .setContentIntent(pendingIntent)
+                            .addAction(R.drawable.ic_store, "View", mainActivityPendingIntent)
                             .setAutoCancel(false)
 
                         with(NotificationManagerCompat.from(this)) {
