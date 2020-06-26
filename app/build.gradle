@@ -8,13 +8,13 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.izho.saveentry"
-        minSdkVersion 26
-        targetSdkVersion 26
+        minSdkVersion 28
+        targetSdkVersion 28
         versionCode 9
         versionName "1.1.7"
 
