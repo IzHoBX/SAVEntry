@@ -18,10 +18,15 @@ package com.izho.saveentry.settings
 
 import android.hardware.Camera
 import android.os.Bundle
+import android.webkit.CookieManager
+import android.webkit.WebStorage
+import android.widget.Toast
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.izho.saveentry.utils.Utils
 import com.izho.saveentry.camera.CameraSource
 import com.izho.saveentry.R
+import com.izho.saveentry.utils.SafeEntryHelper
 import java.util.HashMap
 
 /** Configures App settings.  */
@@ -29,45 +34,36 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        setUpRearCameraPreviewSizePreference()
-    }
 
-    private fun setUpRearCameraPreviewSizePreference() {
-        val previewSizePreference =
-                findPreference<androidx.preference.ListPreference>(getString(R.string.pref_key_rear_camera_preview_size))!!
-
-        var camera: Camera? = null
-
-        try {
-            camera = Camera.open(CameraSource.CAMERA_FACING_BACK)
-            val previewSizeList = Utils.generateValidPreviewSizeList(camera!!)
-            val previewSizeStringValues = arrayOfNulls<String>(previewSizeList.size)
-            val previewToPictureSizeStringMap = HashMap<String, String>()
-            for (i in previewSizeList.indices) {
-                val sizePair = previewSizeList[i]
-                previewSizeStringValues[i] = sizePair.preview.toString()
-                if (sizePair.picture != null) {
-                    previewToPictureSizeStringMap[sizePair.preview.toString()] = sizePair.picture.toString()
-                }
-            }
-            previewSizePreference.entries = previewSizeStringValues
-            previewSizePreference.entryValues = previewSizeStringValues
-            previewSizePreference.summary = previewSizePreference.entry
-            previewSizePreference.setOnPreferenceChangeListener { _, newValue ->
-                val newPreviewSizeStringValue = newValue as String
-                val context = activity ?: return@setOnPreferenceChangeListener false
-                previewSizePreference.summary = newPreviewSizeStringValue
-                PreferenceUtils.saveStringPreference(
-                        context,
-                        R.string.pref_key_rear_camera_picture_size,
-                        previewToPictureSizeStringMap[newPreviewSizeStringValue])
-                true
-            }
-        } catch (e: Exception) {
-            // If there's no camera for the given camera id, hide the corresponding preference.
-            previewSizePreference.parent?.removePreference(previewSizePreference)
-        } finally {
-            camera?.release()
+        val tileBehaviorPreference =
+            findPreference<androidx.preference.ListPreference>(getString(R.string.settings_tile_behavior))!!
+        val optionsKeyToReadable = HashMap<String, String>()
+        optionsKeyToReadable.put(getString(R.string.tile_behavior_scanner), "Always Open Scanner")
+        optionsKeyToReadable.put(getString(R.string.tile_behavior_checkout), "Switch between Check in and out")
+        tileBehaviorPreference.entries = optionsKeyToReadable.values.toTypedArray()
+        tileBehaviorPreference.entryValues = optionsKeyToReadable.keys.toTypedArray()
+        tileBehaviorPreference.summary = tileBehaviorPreference.entry
+        tileBehaviorPreference.setOnPreferenceChangeListener { _, newValue ->
+            val newBehaviorKey = newValue as String
+            val context = activity ?: return@setOnPreferenceChangeListener false
+            tileBehaviorPreference.summary = optionsKeyToReadable[newBehaviorKey]
+            PreferenceUtils.saveStringPreference(
+                context,
+                R.string.settings_tile_behavior,
+                newBehaviorKey)
+            true
         }
+        //sets default
+        val currContext = context
+        if(currContext != null) {
+            tileBehaviorPreference.summary = optionsKeyToReadable[PreferenceUtils.getStringPref(currContext, R.string.settings_tile_behavior, currContext.getString(R.string.tile_behavior_scanner))]
+        }
+
+        findPreference<Preference>(getString(R.string.reset_checkin_information))?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            WebStorage.getInstance().deleteAllData();
+            Toast.makeText(context, "Check in information cleared", Toast.LENGTH_SHORT).show()
+            true
+        }
+
     }
 }

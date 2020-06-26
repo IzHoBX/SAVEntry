@@ -27,7 +27,7 @@
     <string name="pref_summary_minimum_barcode_width" formatted="false">Relative to the reticle width, ranges from 20% to 80% (only applicable when barcode size check enabled)</string>
     <string name="pref_key_delay_loading_barcode_result" translatable="false">barcode_dlbr</string>
     <string name="pref_title_delay_loading_barcode_result">Delay loading barcode result</string>
-    <string name="pref_summary_delay_loading_barcode_result">Will show the loading spinner for 2s</string>
+    <string name="pref_summary_delay_loading_barcode_result">Will show the loading spinner for 0.75s</string>
 
     <!-- Strings for prompts -->
     <string name="prompt_point_at_a_barcode">Point your camera at a SafeEntry QR Code</string>
@@ -58,5 +58,15 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="title_activity_choose_location_for_widget">ChooseLocationForWidget</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="settings_tile">Settings Tile</string>
+    <string name="settings_tile_behavior">Settings Tile Behavior</string>
+    <string name="checkin_information">Check In Information</string>
+    <string name="reset_checkin_information">Reset Check In Information</string>
+    <string name="reset_cookie_explanation">Clears your NRIC and contact number</string>
+
+    <string name="tile_behavior_scanner">tile_scanner</string>
+    <string name="tile_behavior_checkout">tile_checkout</string>
 
 </resources>

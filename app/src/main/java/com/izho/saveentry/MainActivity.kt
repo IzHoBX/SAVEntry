@@ -2,7 +2,7 @@ package com.izho.saveentry
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +12,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.izho.saveentry.data.getAppDatabase
+import com.izho.saveentry.settings.AdminSettingsActivity
+import com.izho.saveentry.settings.SettingsActivity
 import com.izho.saveentry.ui.ActiveFragment
 import com.izho.saveentry.ui.FavoritesFragment
 import com.izho.saveentry.ui.HistoryFragment
@@ -85,5 +87,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    fun startSettings(view: View) {
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
 }

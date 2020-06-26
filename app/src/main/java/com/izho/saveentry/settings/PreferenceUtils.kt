@@ -17,6 +17,7 @@
 package com.izho.saveentry.settings
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.RectF
 import android.preference.PreferenceManager
 import androidx.annotation.StringRes
@@ -26,7 +27,7 @@ import com.izho.saveentry.camera.GraphicOverlay
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.izho.saveentry.R
 
-/** Utility class to retrieve shared preferences.  */
+/** Utility class to retrieve shared admin_preferences.  */
 object PreferenceUtils {
 
     fun saveStringPreference(context: Context, @StringRes prefKeyId: Int, value: String?) {
@@ -71,6 +72,12 @@ object PreferenceUtils {
         return sharedPreferences.getInt(prefKey, defaultValue)
     }
 
+    fun getStringPref(context: Context, @StringRes prefKeyId: Int, defaultValue: String): String {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val prefKey = context.getString(prefKeyId)
+        return sharedPreferences.getString(prefKey, defaultValue) ?: defaultValue
+    }
+
     fun getUserSpecifiedPreviewSize(context: Context): CameraSizePair? {
         return try {
             val previewSizePrefKey = context.getString(R.string.pref_key_rear_camera_preview_size)
@@ -82,6 +89,14 @@ object PreferenceUtils {
         } catch (e: Exception) {
             null
         }
+    }
+
+    fun registerListener(listener:SharedPreferences.OnSharedPreferenceChangeListener, context:Context) {
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(listener)
+    }
+
+    fun unregisterListener(listener:SharedPreferences.OnSharedPreferenceChangeListener, context:Context) {
+        PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(listener)
     }
 
     private fun getBooleanPref(context: Context, @StringRes prefKeyId: Int, defaultValue: Boolean): Boolean =
