@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.izho.saveentry"
-        minSdkVersion 28
+        minSdkVersion 27
         targetSdkVersion 28
         versionCode 9
         versionName "1.1.7"
