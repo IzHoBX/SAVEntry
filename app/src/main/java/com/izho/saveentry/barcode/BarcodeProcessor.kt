@@ -96,7 +96,7 @@ class BarcodeProcessor(graphicOverlay: GraphicOverlay, private val workflowModel
     private fun createLoadingAnimator(graphicOverlay: GraphicOverlay, barcode: FirebaseVisionBarcode): ValueAnimator {
         val endProgress = 1.1f
         return ValueAnimator.ofFloat(0f, endProgress).apply {
-            duration = 2000
+            duration = 1000
             addUpdateListener {
                 if ((animatedValue as Float).compareTo(endProgress) >= 0) {
                     graphicOverlay.clear()

@@ -14,6 +14,7 @@ import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.VisitWithLocation
 import com.izho.saveentry.data.getAppDatabase
 import com.izho.saveentry.SAVEntryApplication
+import com.izho.saveentry.utils.RemoteConfigManager
 import com.izho.saveentry.utils.SafeEntryHelper
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -124,65 +125,72 @@ class CheckInOrOutViewModel(app: Application,
                 if (url != null && _action.value != null && (url.contains("qrScan") || url.contains("tenant"))) {
                     when(_action.value) {
                         "checkIn" -> {
+                            /*
                             val clickCheckIn = """
                                 const waitElement = (selector, idx, cb) => {
                                     const waitId = setInterval(() => {
-                                        const el = $(selector)
+                                        const el = $(selector);
                                         if (el.length) {
                                             clearInterval(waitId);
                                             cb(el[idx]);
                                         }
                                     }, 100);
-                                }
+                                };
 
                                 waitElement('.safeentry-check-btn', 0, checkInBtn => {
                                     checkInBtn.click();
 
                                     waitElement('.submit-button button', 0, (submitBtn) => {
                                         if (submitBtn.disabled) {
-                                            alert('${MessageType.NO_DETAILS.name}');
+                                            alert('NO_DETAILS');
                                         } else {
-                                            submitBtn.click()
+                                            submitBtn.click();
                                         }
                                     });
                                 });
 
                                 waitElement('.safe-entry-card', 0, card => {
-                                    alert('${MessageType.CHECK_IN_COMPLETED.name}');
+                                    alert('CHECK_IN_COMPLETED');
                                 });
                             """
+                            */
+                            val clickCheckIn = SafeEntryHelper.getCheckinScript()
 
                             view?.evaluateJavascript(clickCheckIn) {}
                         }
 
                         "checkOut" -> {
+                            /*
                             val clickCheckOut = """
                                 const waitElement = (selector, idx, cb) => {
                                     const waitId = setInterval(() => {
-                                        const el = $(selector)
+                                        const el = $(selector);
                                         if (el.length) {
                                             clearInterval(waitId);
                                             cb(el[idx]);
                                         }
                                     }, 100);
-                                }
+                                };
 
                                 waitElement('.safeentry-check-btn', 1, checkInBtn => {
                                     checkInBtn.click();
 
                                     waitElement('.submit-button button', 0, (submitBtn) => {
                                         if (submitBtn.disabled) {
-                                            alert('${MessageType.NO_DETAILS.name}');
+                                            alert('NO_DETAILS');
                                         } else {
-                                            submitBtn.click()
+                                            submitBtn.click();
                                         }
                                     });
                                 });
 
                                 waitElement('.safe-entry-card', 0, card => {
-                                    alert('${MessageType.CHECK_OUT_COMPLETED.name}');
+                                    alert('CHECK_OUT_COMPLETED');
                                 });
                             """
+                            */
+
+                            val clickCheckOut = SafeEntryHelper.getCheckOutScript()
 
                             view?.evaluateJavascript(clickCheckOut) {}
                         }

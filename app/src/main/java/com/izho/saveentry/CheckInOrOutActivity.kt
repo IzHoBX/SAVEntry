@@ -11,6 +11,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.webkit.CookieManager
+import android.webkit.WebStorage
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
@@ -109,10 +111,6 @@ class CheckInOrOutActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory).get(CheckInOrOutViewModel::class.java)
 
         webView = findViewById(R.id.webview_browser)
-        /*conditions to use online
-        1. has internet
-        2. has no internet, and the current action is check out, but the visit was checked in online --> must checked out online to ensure server logged user as checked out
-         */
         if(isInternetAvailable()) {
             webView.apply {
                 @SuppressLint("SetJavaScriptEnabled")
@@ -147,6 +145,9 @@ class CheckInOrOutActivity : AppCompatActivity() {
                         intent.putExtra("visitId", data.visit.visitId)
                         intent.putExtra("url", data.location.url)
 
+                        val mainActivityIntent = Intent(this, MainActivity::class.java)
+                        val mainActivityPendingIntent = PendingIntent.getActivity(this, 0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
                         val pendingIntent = TaskStackBuilder.create(this).run {
                             addNextIntentWithParentStack(intent)
                             getPendingIntent(data.visit.notificationId, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -163,6 +164,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setOngoing(true)
                             .setContentIntent(pendingIntent)
+                            .addAction(R.drawable.ic_store, "View", mainActivityPendingIntent)
                             .setAutoCancel(false)
 
                         with(NotificationManagerCompat.from(this)) {

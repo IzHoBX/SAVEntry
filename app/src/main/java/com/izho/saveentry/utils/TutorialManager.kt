@@ -13,6 +13,9 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.izho.saveentry.R
 import okhttp3.internal.immutableListOf
 
@@ -38,6 +41,28 @@ class TutorialManager(val activity: AppCompatActivity) {
             TutorialPagerAdapter(
                 activity
             )
+        val tabLayout = popupView.findViewById<TabLayout>(R.id.indicator)
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            //Some implementation
+        }.attach()
+
+
+        viewPager.registerOnPageChangeCallback( object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                if(position == viewPager.adapter!!.itemCount-1) {
+                    popupView.findViewById<Button>(R.id.next).setText("Done")
+                } else {
+                    popupView.findViewById<Button>(R.id.next).setText("Next")
+                }
+                if ((viewPager.adapter as TutorialPagerAdapter).showHow[position]) {
+                    popupView.findViewById<Button>(R.id.show_me).visibility= View.VISIBLE
+                } else {
+                    popupView.findViewById<Button>(R.id.show_me).visibility= View.GONE
+                }
+                super.onPageSelected(position)
+            }
+
+        })
 
         popupView.findViewById<Button>(R.id.next).setOnClickListener {
             if(viewPager.currentItem == viewPager.adapter!!.itemCount-1) {
