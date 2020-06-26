@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.izho.saveentry.R
 import okhttp3.internal.immutableListOf
 
@@ -39,6 +41,11 @@ class TutorialManager(val activity: AppCompatActivity) {
             TutorialPagerAdapter(
                 activity
             )
+        val tabLayout = popupView.findViewById<TabLayout>(R.id.indicator)
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            //Some implementation
+        }.attach()
+
 
         viewPager.registerOnPageChangeCallback( object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
