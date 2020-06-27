@@ -12,7 +12,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.izho.saveentry.data.getAppDatabase
-import com.izho.saveentry.settings.AdminSettingsActivity
 import com.izho.saveentry.settings.SettingsActivity
 import com.izho.saveentry.ui.ActiveFragment
 import com.izho.saveentry.ui.FavoritesFragment
