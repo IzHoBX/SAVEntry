@@ -34,6 +34,7 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.hardware.Camera
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
@@ -59,7 +60,9 @@ object Utils {
     internal fun requestRuntimePermissions(activity: Activity) {
 
         val allNeededPermissions = getRequiredPermissions(activity).filter {
-            checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED
+            !(Build.VERSION.SDK_INT < Build.VERSION_CODES.O && it == "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE")
+                    && !(Build.VERSION.SDK_INT < Build.VERSION_CODES.P && it == "android.permission.FOREGROUND_SERVICE")
+                    && checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED
         }
 
         if (allNeededPermissions.isNotEmpty()) {
