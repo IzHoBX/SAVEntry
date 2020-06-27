@@ -7,6 +7,7 @@ import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -207,6 +208,10 @@ class CheckInOrOutActivity : AppCompatActivity() {
     ) {
         if (visitWithLocation != null && !(visitWithLocation!!.visit.isOfflineCheckIn)) {
             Toast.makeText(this, "You checked in online previously. Hence you must check out online as well. Please turn on internet connection.", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        } else if (Uri.parse(url).host !in SafeEntryHelper.getQRCodeHost()) {
+            Toast.makeText(this, "Device is offline - unable to load non-Safe Entry QR offline", Toast.LENGTH_LONG).show()
             finish()
             return
         }

@@ -242,15 +242,11 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
                     startCheckInOrOutActivity(barcode)
                 } else {
                     val toDoWhenPulled = Runnable {
-                        if (url.host in SafeEntryHelper.getQRCodeHost()) {
-                            startCheckInOrOutActivity(barcode)
-                        } else {
-                            preview?.let {
-                                Snackbar.make(it, "Invalid URL", Snackbar.LENGTH_SHORT).show()
-                                startCameraPreview()
-                            }
-                            FirebaseCrashlytics.getInstance().recordException(NotSafeEntryQRException(url.host ?: ""))
+                        if (url.host !in SafeEntryHelper.getQRCodeHost()) {
+                            Toast.makeText(this, "Loading non-Safe Entry QR", Toast.LENGTH_SHORT).show()
+                            FirebaseCrashlytics.getInstance().recordException(NotSafeEntryQRException(url.toString()))
                         }
+                        startCheckInOrOutActivity(barcode)
                     }
                     SafeEntryHelper.forceUpdate(toDoWhenPulled)
                 }
