@@ -1,5 +1,6 @@
 package com.izho.saveentry.utils
 
+import android.app.ActionBar
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,14 +15,15 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.izho.saveentry.R
 import okhttp3.internal.immutableListOf
 
 
-const val TUTORIAL_POPUP_WIDTH = 900
-const val TUTORIAL_POPUP_HEIGHT = 1855
+const val TUTORIAL_POPUP_WIDTH = WindowManager.LayoutParams.WRAP_CONTENT
+const val TUTORIAL_POPUP_HEIGHT = WindowManager.LayoutParams.WRAP_CONTENT
 
 class TutorialManager(val activity: AppCompatActivity) {
     fun showTutorial(viewPagerId:Int) {
@@ -129,26 +131,18 @@ class TutorialManager(val activity: AppCompatActivity) {
         ): View? {
             return inflater.inflate(R.layout.fragment_tutorial, container, false)
         }
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-        }
     }
 
     class WidgetTutorialFragment : TutorialFragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(
-                R.drawable.check_in_home
-            ))
+            Glide.with(this).load(R.drawable.check_in_home).into(view.findViewById<ImageView>(R.id.imageView))
             super.onViewCreated(view, savedInstanceState)
         }
     }
 
     class TileTutorialFragment : TutorialFragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(
-                R.drawable.check_in_lock
-            ))
+            Glide.with(this).load(R.drawable.check_in_lock).into(view.findViewById<ImageView>(R.id.imageView))
             super.onViewCreated(view, savedInstanceState)
         }
     }
@@ -159,9 +153,7 @@ class TutorialManager(val activity: AppCompatActivity) {
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            view.findViewById<ImageView>(R.id.imageView).setImageDrawable(activity?.getDrawable(
-                R.drawable.add_to_fav
-            ))
+            Glide.with(this).load(R.drawable.add_to_fav).into(view.findViewById<ImageView>(R.id.imageView))
             super.onViewCreated(view, savedInstanceState)
         }
     }

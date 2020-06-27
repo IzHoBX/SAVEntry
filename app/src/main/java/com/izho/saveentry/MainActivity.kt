@@ -45,7 +45,12 @@ class MainActivity : AppCompatActivity() {
 
         tabs.post {
             if(!Prefs.hasSeenTutorial(this)) {
-                TutorialManager(this).showTutorial(R.id.view_pager)
+                try {
+                    TutorialManager(this).showTutorial(R.id.view_pager)
+                } catch (e:Throwable) {
+                    //likely due to the device memory is unable to load the raw image
+                    Prefs.setHasSeenTutorial(this, true)
+                }
             }
         }
         SafeEntryHelper.update()
