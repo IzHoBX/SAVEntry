@@ -58,10 +58,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (!Utils.allPermissionsGranted(this)) {
-            Utils.requestRuntimePermissions(this)
-        }
-
+        Utils.requestCameraPermissionIfNotGranted(this)
         setSelectedTab()
     }
 

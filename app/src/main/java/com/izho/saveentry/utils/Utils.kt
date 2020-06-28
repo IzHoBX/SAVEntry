@@ -37,7 +37,10 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
+import com.izho.saveentry.CAMERA_PERMISSSION_REQUEST_CODE
 import com.izho.saveentry.camera.CameraSizePair
 import java.io.IOException
 import java.io.InputStream
@@ -68,6 +71,12 @@ object Utils {
         if (allNeededPermissions.isNotEmpty()) {
             ActivityCompat.requestPermissions(
                     activity, allNeededPermissions.toTypedArray(), /* requestCode= */ 0)
+        }
+    }
+
+    fun requestCameraPermissionIfNotGranted(activity: Activity) {
+        if(ContextCompat.checkSelfPermission(activity, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            activity.requestPermissions(Array<String>(1, {index -> android.Manifest.permission.CAMERA}), CAMERA_PERMISSSION_REQUEST_CODE)
         }
     }
 
