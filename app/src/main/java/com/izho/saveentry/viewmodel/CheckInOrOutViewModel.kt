@@ -19,6 +19,7 @@ import com.izho.saveentry.utils.SafeEntryHelper
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -111,7 +112,8 @@ class CheckInOrOutViewModel(app: Application,
                 } else if (_action.value == "checkIn" && request?.url?.path in SafeEntryHelper.getCheckoutPageIconPath()) {
                     if(view!=null) {
                         _action.postValue("checkOut")
-                        checkOutOfLocation(view)
+                        webChromeClient.onJsAlert(view, url, "CHECK_OUT_COMPLETED", null)
+                        //checkOutOfLocation(view)
                     }
                 }
 
@@ -202,6 +204,7 @@ class CheckInOrOutViewModel(app: Application,
 
     val webChromeClient by lazy {
         object: WebChromeClient() {
+            var prevJob:Job? = null
             override fun onJsAlert(
                 view: WebView?,
                 url: String?,
@@ -211,8 +214,8 @@ class CheckInOrOutViewModel(app: Application,
                 if (view != null) {
                     message?.let {
                         when(MessageType.valueOf(it)) {
-                            MessageType.CHECK_IN_COMPLETED -> checkInToLocation(view)
-                            MessageType.CHECK_OUT_COMPLETED -> checkOutOfLocation(view)
+                            MessageType.CHECK_IN_COMPLETED -> prevJob = checkInToLocation(view, prevJob)
+                            MessageType.CHECK_OUT_COMPLETED -> prevJob = checkOutOfLocation(view, prevJob)
                             MessageType.NO_DETAILS -> {
                                 errorMessage.value = "Please fill in details for the first time."
                                 Log.i(TAG, "Unable to automatically " +
@@ -236,8 +239,9 @@ class CheckInOrOutViewModel(app: Application,
         _errorMessage.value = null
     }
 
-    fun checkInToLocation(view: View, location:Location?=currentLocation.value, isOfflineCheckIn:Boolean=false) {
-        viewModelScope.launch {
+    fun checkInToLocation(view: View,  prevJob:Job?, location:Location?=currentLocation.value, isOfflineCheckIn:Boolean=false) : Job? {
+        return viewModelScope.launch {
+            prevJob?.join()
             if (location != null) {
                 database.dao.insertLocation(location)
 
@@ -256,29 +260,33 @@ class CheckInOrOutViewModel(app: Application,
     }
 
     @SuppressLint("Parameter never used")
-    fun checkOutOfLocation(view: View) {
-        val localVistId = visitId
-        localVistId?.let {
-            viewModelScope.launch {
-                val data = database.dao.getVisitWithLocationById(localVistId)
+    fun checkOutOfLocation(view: View, prevJob: Job?) : Job? {
+        visitId?.let {
+            return viewModelScope.launch {
+                prevJob?.join()
+                val localVistId = visitId
+                if(localVistId != null) {
+                    val data = database.dao.getVisitWithLocationById(localVistId)
 
-                // Delete pass image file
-                data.visit.passImagePath?.let {
-                    val app = getApplication<SAVEntryApplication>()
-                    val file = File(app.applicationContext.filesDir, it)
-                    if (file.exists()) {
-                        file.delete()
+                    // Delete pass image file
+                    data.visit.passImagePath?.let {
+                        val app = getApplication<SAVEntryApplication>()
+                        val file = File(app.applicationContext.filesDir, it)
+                        if (file.exists()) {
+                            file.delete()
+                        }
                     }
+
+                    // Update the check out time to current time.
+                    data.visit.checkOutAt = System.currentTimeMillis()
+                    database.dao.updateVisit(data.visit)
+
+                    Log.i(TAG, "Completed checking out for ${data.location.locationId}")
+                    _createdVisit.value = data
                 }
-
-                // Update the check out time to current time.
-                data.visit.checkOutAt = System.currentTimeMillis()
-                database.dao.updateVisit(data.visit)
-
-                Log.i(TAG, "Completed checking out for ${data.location.locationId}")
-                _createdVisit.value = data
             }
         }
+        return null
     }
 
     private suspend fun captureSnapshot(view: View): String? {
