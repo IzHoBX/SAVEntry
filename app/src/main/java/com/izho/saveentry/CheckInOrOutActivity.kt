@@ -255,7 +255,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
                 ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     viewModel.checkInToLocation(
-                        offlineCheckInOrOut, Location(
+                        offlineCheckInOrOut, null, Location(
                             locationId,
                             intent.extras?.getString("organization") ?: "",
                             venueName,
@@ -270,7 +270,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
             offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView)
                 .setImageDrawable(getDrawable(R.drawable.checkout_screenshot))
             Toast.makeText(this, "No internet, using offline check out", Toast.LENGTH_SHORT).show()
-            viewModel.checkOutOfLocation(offlineCheckInOrOut)
+            viewModel.checkOutOfLocation(offlineCheckInOrOut, null)
             GlobalScope.launch {
                 if (visitId != null) {
                     offlineCheckInOrOut.findViewById<TextView>(R.id.location_name).text =
