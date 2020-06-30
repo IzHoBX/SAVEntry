@@ -261,27 +261,29 @@ class CheckInOrOutViewModel(app: Application,
 
     @SuppressLint("Parameter never used")
     fun checkOutOfLocation(view: View, prevJob: Job?) : Job? {
-        val localVistId = visitId
-        localVistId?.let {
+        visitId?.let {
             return viewModelScope.launch {
                 prevJob?.join()
-                val data = database.dao.getVisitWithLocationById(localVistId)
+                val localVistId = visitId
+                if(localVistId != null) {
+                    val data = database.dao.getVisitWithLocationById(localVistId)
 
-                // Delete pass image file
-                data.visit.passImagePath?.let {
-                    val app = getApplication<SAVEntryApplication>()
-                    val file = File(app.applicationContext.filesDir, it)
-                    if (file.exists()) {
-                        file.delete()
+                    // Delete pass image file
+                    data.visit.passImagePath?.let {
+                        val app = getApplication<SAVEntryApplication>()
+                        val file = File(app.applicationContext.filesDir, it)
+                        if (file.exists()) {
+                            file.delete()
+                        }
                     }
+
+                    // Update the check out time to current time.
+                    data.visit.checkOutAt = System.currentTimeMillis()
+                    database.dao.updateVisit(data.visit)
+
+                    Log.i(TAG, "Completed checking out for ${data.location.locationId}")
+                    _createdVisit.value = data
                 }
-
-                // Update the check out time to current time.
-                data.visit.checkOutAt = System.currentTimeMillis()
-                database.dao.updateVisit(data.visit)
-
-                Log.i(TAG, "Completed checking out for ${data.location.locationId}")
-                _createdVisit.value = data
             }
         }
         return null
