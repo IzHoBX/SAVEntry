@@ -15,8 +15,8 @@ android {
         applicationId "com.izho.saveentry"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 14
-        versionName "1.1.11"
+        versionCode 15
+        versionName "1.1.12"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
