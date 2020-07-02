@@ -101,6 +101,7 @@ class CheckInOrOutViewModel(app: Application,
                             info?.let {
                                 _currentLocation.postValue(
                                     Location(locationId, info.entityName, info.venueName, url))
+                                database.dao.updateLocationNames(info.venueName, info.entityName, locationId)
                             }
                         }
                     } catch (e:Throwable) {

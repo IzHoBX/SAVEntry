@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Dao
 interface AppDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertLocation(location: Location): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -53,6 +53,9 @@ interface AppDao {
 
     @Query("SELECT * FROM visit WHERE check_out_at IS NULL AND location_id = :locationId")
     fun getActiveVisitWithLocationId(locationId:String) : LiveData<List<VisitWithLocation>>
+
+    @Query("UPDATE location SET organization = :organization, venue_name = :venueName WHERE location_id = :location_id")
+    fun updateLocationNames(venueName:String, organization:String, location_id:String)
 }
 
 @Database(entities = [Location::class, Visit::class], version = 3)
