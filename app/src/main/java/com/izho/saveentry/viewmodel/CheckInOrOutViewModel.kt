@@ -10,7 +10,6 @@ import android.view.View
 import android.webkit.*
 import androidx.lifecycle.*
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.izho.saveentry.LiveBarcodeScanningActivity
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.VisitWithLocation
@@ -252,9 +251,10 @@ class CheckInOrOutViewModel(app: Application,
             if (location != null) {
                 database.dao.insertLocation(location)
 
-                val passImage = captureSnapshot(view)
+                val snapshot = createBitmap(view)
+                val passImagePath = saveSnapshotToFile(snapshot)
                 val visitId = database.dao.insertVisit(
-                    Visit(locationId = location.locationId, passImagePath = passImage, isOfflineCheckIn = isOfflineCheckIn))
+                    Visit(locationId = location.locationId, passImagePath = passImagePath, isOfflineCheckIn = isOfflineCheckIn))
                 this@CheckInOrOutViewModel.visitId = visitId
                 val visit = database.dao.getVisitWithLocationById(visitId)
 
@@ -298,13 +298,17 @@ class CheckInOrOutViewModel(app: Application,
         }
     }
 
-    private suspend fun captureSnapshot(view: View): String? {
-        return withContext(Dispatchers.IO) {
-            val bitmap = Bitmap.createBitmap(
-                view.width, view.height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(bitmap)
-            view.draw(canvas)
+    private fun createBitmap(view:View): Bitmap {
+        val bitmap = Bitmap.createBitmap(
+            view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
 
+        return bitmap
+    }
+
+    private suspend fun saveSnapshotToFile(bitmap: Bitmap): String? {
+        return withContext(Dispatchers.IO) {
             val application = getApplication<SAVEntryApplication>()
 
             val filename = "${UUID.randomUUID()}.jpg"
