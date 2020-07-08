@@ -28,6 +28,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.VisitWithLocation
 import com.izho.saveentry.data.getAppDatabase
@@ -77,7 +78,6 @@ class CheckInOrOutActivity : AppCompatActivity() {
             val allActiveVisit = getAppDatabase(this, resetDb = false).dao.getActiveVisitWithLocationId(SafeEntryHelper.getLocationId(url!!))
             allActiveVisit.observe(this, Observer {
                 allActiveVisit.removeObservers(this)
-                Log.v("repeated", it.size.toString())
                 if(it.size > 0) {
                     Toast.makeText(this, "You already checked-in to this location", Toast.LENGTH_SHORT).show()
                     finish()
@@ -270,6 +270,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
             offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView)
                 .setImageDrawable(getDrawable(R.drawable.checkout_screenshot))
             Toast.makeText(this, "No internet, using offline check out", Toast.LENGTH_SHORT).show()
+            FirebaseCrashlytics.getInstance().setCustomKey("offline_checkout", true);
             viewModel.checkOutOfLocation(offlineCheckInOrOut, null)
             GlobalScope.launch {
                 if (visitId != null) {

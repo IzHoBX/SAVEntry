@@ -9,12 +9,13 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import androidx.lifecycle.*
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.izho.saveentry.LiveBarcodeScanningActivity
 import com.izho.saveentry.data.Location
 import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.VisitWithLocation
 import com.izho.saveentry.data.getAppDatabase
 import com.izho.saveentry.SAVEntryApplication
-import com.izho.saveentry.utils.RemoteConfigManager
 import com.izho.saveentry.utils.SafeEntryHelper
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -25,6 +26,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
+import java.lang.Exception
 import java.util.*
 
 class CheckInOrOutViewModel(app: Application,
@@ -216,7 +218,11 @@ class CheckInOrOutViewModel(app: Application,
                     message?.let {
                         when(MessageType.valueOf(it)) {
                             MessageType.CHECK_IN_COMPLETED -> prevJob = checkInToLocation(view, prevJob)
-                            MessageType.CHECK_OUT_COMPLETED -> prevJob = checkOutOfLocation(view, prevJob)
+                            MessageType.CHECK_OUT_COMPLETED -> {
+                                FirebaseCrashlytics.getInstance().setCustomKey("offline_checkout", false);
+                                FirebaseCrashlytics.getInstance().setCustomKey("original action", action ?: "null");
+                                prevJob = checkOutOfLocation(view, prevJob)
+                            }
                             MessageType.NO_DETAILS -> {
                                 errorMessage.value = "Please fill in details for the first time."
                                 Log.i(TAG, "Unable to automatically " +
@@ -262,32 +268,34 @@ class CheckInOrOutViewModel(app: Application,
 
     @SuppressLint("Parameter never used")
     fun checkOutOfLocation(view: View, prevJob: Job?) : Job? {
-        visitId?.let {
-            return viewModelScope.launch {
-                prevJob?.join()
-                val localVistId = visitId
-                if(localVistId != null) {
-                    val data = database.dao.getVisitWithLocationById(localVistId)
-
-                    // Delete pass image file
-                    data.visit.passImagePath?.let {
-                        val app = getApplication<SAVEntryApplication>()
-                        val file = File(app.applicationContext.filesDir, it)
-                        if (file.exists()) {
-                            file.delete()
-                        }
+        return viewModelScope.launch {
+            prevJob?.join()
+            val localVisitId = visitId ?: return@launch //should not be null at all
+            val data = database.dao.getVisitWithLocationById(localVisitId)
+            if(data != null) {//IDE is wrong, data can be null if localVisitId is invalid
+                // Delete pass image file
+                data.visit.passImagePath?.let {
+                    val app = getApplication<SAVEntryApplication>()
+                    val file = File(app.applicationContext.filesDir, it)
+                    if (file.exists()) {
+                        file.delete()
                     }
-
-                    // Update the check out time to current time.
-                    data.visit.checkOutAt = System.currentTimeMillis()
-                    database.dao.updateVisit(data.visit)
-
-                    Log.i(TAG, "Completed checking out for ${data.location.locationId}")
-                    _createdVisit.value = data
                 }
+
+                // Update the check out time to current time.
+                data.visit.checkOutAt = System.currentTimeMillis()
+                database.dao.updateVisit(data.visit)
+
+                Log.i(TAG, "Completed checking out for ${data.location.locationId}")
+                _createdVisit.value = data
+            } else {
+                FirebaseCrashlytics.getInstance().recordException(
+                    ToInvestigateURLException(
+                        url.toString()
+                    )
+                )
             }
         }
-        return null
     }
 
     private suspend fun captureSnapshot(view: View): String? {
@@ -339,4 +347,6 @@ class CheckInOrOutViewModel(app: Application,
     companion object {
         private const val TAG = "CheckInOrOutViewModel"
     }
+
+    class ToInvestigateURLException(val url:String) : Exception("Url causing checkout with invalid visit id: $url")
 }
