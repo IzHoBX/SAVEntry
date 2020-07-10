@@ -39,8 +39,15 @@ class MainActivity : AppCompatActivity() {
         setSelectedTab()
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
-        fab.setOnClickListener { _ ->
-            startActivity(Intent(this, LiveBarcodeScanningActivity::class.java))
+        fab.setOnClickListener {
+            if(BuildConfig.DEBUG) {
+                val intent = Intent(this, CheckInOrOutActivity::class.java)
+                intent.putExtra("url", "https://temperaturepass.ndi-api.gov.sg/login/PROD-200002019C-224153-XPNUS-SE")
+                intent.putExtra("action", "checkIn")
+                startActivity(intent)
+            } else {
+                startActivity(Intent(this, LiveBarcodeScanningActivity::class.java))
+            }
         }
 
         tabs.post {
