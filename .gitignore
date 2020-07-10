@@ -15,3 +15,4 @@ app/releases/**
 .cxx
 
 app/google-services.json
+app/release/
