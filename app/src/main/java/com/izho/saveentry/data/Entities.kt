@@ -10,7 +10,8 @@ data class Location(
     @ColumnInfo(name = "organization") val organization: String,
     @ColumnInfo(name = "venue_name") val venueName: String,
     val url: String,
-    var favorite: Boolean = false
+    var favorite: Boolean = false,
+    @ColumnInfo(name = "user_defined_name") val userDefinedName: String? = null
 )
 
 @Entity(tableName = "visit")

@@ -58,7 +58,7 @@ interface AppDao {
     fun updateLocationNames(venueName:String, organization:String, location_id:String)
 }
 
-@Database(entities = [Location::class, Visit::class], version = 3)
+@Database(entities = [Location::class, Visit::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
     abstract val dao: AppDao
 }
@@ -77,6 +77,13 @@ private val MIGRATION_2_3 = object : Migration(2, 3) {
     }
 }
 
+// Migration (10/07/2020): Added a new column for location
+private val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE location ADD COLUMN user_defined_name TEXT")
+    }
+}
+
 private lateinit var INSTANCE: AppDatabase
 fun getAppDatabase(context: Context, resetDb: Boolean = false): AppDatabase {
     val TAG = "AppDatabase"
@@ -87,7 +94,7 @@ fun getAppDatabase(context: Context, resetDb: Boolean = false): AppDatabase {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "app"
-            ).addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             if (resetDb) {
                 builder.addCallback(object : RoomDatabase.Callback() {
                     override fun onOpen(db: SupportSQLiteDatabase) {
