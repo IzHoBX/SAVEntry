@@ -85,6 +85,13 @@ class ActiveVisitViewHolder private constructor(private val binding: ActiveVisit
             binding.checkOutHandler = it
         }
 
+        handlers[VisitDataItemHandlerType.CONTEXT_MENU]?.let { handler ->
+            binding.root.setOnLongClickListener { _ ->
+                handler.onClick(item)
+                true
+            }
+        }
+
         binding.executePendingBindings()
     }
 

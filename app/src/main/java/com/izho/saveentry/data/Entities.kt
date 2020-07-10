@@ -11,7 +11,7 @@ data class Location(
     @ColumnInfo(name = "venue_name") val venueName: String,
     val url: String,
     var favorite: Boolean = false,
-    @ColumnInfo(name = "user_defined_name") val userDefinedName: String? = null
+    @ColumnInfo(name = "user_defined_name") var userDefinedName: String? = null
 )
 
 @Entity(tableName = "visit")

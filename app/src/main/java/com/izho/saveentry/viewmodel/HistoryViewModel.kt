@@ -8,8 +8,18 @@ import com.izho.saveentry.data.Visit
 import com.izho.saveentry.data.getAppDatabase
 import kotlinx.coroutines.launch
 
-class HistoryViewModel(app: Application) : AndroidViewModel(app) {
-    private val database = getAppDatabase(app.applicationContext)
+open class PlacesRelatedViewModel(app:Application) :AndroidViewModel(app) {
+    protected val database = getAppDatabase(app.applicationContext)
+
+    fun updateLocationUserDefinedName(location:Location, userDefinedName:String?) {
+        viewModelScope.launch {
+            location.userDefinedName = userDefinedName
+            database.dao.updateLocation(location)
+        }
+    }
+}
+
+class HistoryViewModel(app: Application) : PlacesRelatedViewModel(app) {
     val visits = database.dao.getAllCompletedVisitWithLocation()
 
     fun deleteVisit(visit: Visit) {

@@ -11,8 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class ActiveViewModel(app: Application) : AndroidViewModel(app) {
-    private val database = getAppDatabase(app.applicationContext, resetDb = false)
+class ActiveViewModel(app: Application) : PlacesRelatedViewModel(app) {
     val activeVisits = database.dao.getAllActiveVisitWithLocation()
 
     fun deleteActiveVisit(visit: Visit) {

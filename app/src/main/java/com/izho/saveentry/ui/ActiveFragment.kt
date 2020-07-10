@@ -1,5 +1,6 @@
 package com.izho.saveentry.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,16 +16,22 @@ import com.izho.saveentry.ShowPassImageActivity
 import com.izho.saveentry.databinding.FragmentActiveBinding
 import com.izho.saveentry.viewmodel.ActiveViewModel
 
-class ActiveFragment : Fragment() {
+class ActiveFragment : PlacesRelatedFragment() {
     private val viewModel by lazy {
         ViewModelProvider(this).get(ActiveViewModel::class.java)
+    }
+
+    private lateinit var binding: FragmentActiveBinding
+
+    override fun refreshBindingForLocation() {
+        binding.recyclerViewActive.adapter?.notifyDataSetChanged()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentActiveBinding.inflate(
+        binding = FragmentActiveBinding.inflate(
             layoutInflater, container, false)
         binding.lifecycleOwner = this
 
@@ -56,10 +63,25 @@ class ActiveFragment : Fragment() {
             startActivity(intent)
         }
 
+        val longPressedHandler = VisitDataItemEventHandler { it ->
+            val dataItem = it as DataItem.VisitDataItem
+            val builder = AlertDialog.Builder(this.activity)
+            builder
+                .setTitle("Select Action")
+                .setItems(DIALOG_OPTIONS) { _, which ->
+                    when(which) {
+                        0 -> presentEditPlaceNameDialog(dataItem.data.location, viewModel)
+                    }
+                }
+
+            builder.create().show()
+        }
+
         val handlers = mapOf(
             VisitDataItemHandlerType.DELETE to deleteHandler,
             VisitDataItemHandlerType.CHECKOUT to checkOutHandler,
-            VisitDataItemHandlerType.SHOW_DETAILS to showPassImageHandler
+            VisitDataItemHandlerType.SHOW_DETAILS to showPassImageHandler,
+            VisitDataItemHandlerType.CONTEXT_MENU to longPressedHandler
         )
 
         val listAdapter = DataItemAdapter(VisitListItemType.ACTIVE, handlers)
@@ -77,6 +99,7 @@ class ActiveFragment : Fragment() {
 
     companion object {
         private const val TAG = "ActiveFragment"
+        private val DIALOG_OPTIONS = arrayOf("Rename Place")
 
         @JvmStatic
         fun newInstance() = ActiveFragment()

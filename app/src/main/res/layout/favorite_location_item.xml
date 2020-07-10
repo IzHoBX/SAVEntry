@@ -51,7 +51,7 @@
 
             <TextView
                 android:id="@+id/text_venue"
-                titleCase="@{dataItem.location.venueName}"
+                titleCase="@{dataItem.location.userDefinedName == null ? dataItem.location.venueName : dataItem.location.userDefinedName}"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"

@@ -13,16 +13,22 @@ import com.izho.saveentry.CheckInOrOutActivity
 import com.izho.saveentry.databinding.FragmentHistoryBinding
 import com.izho.saveentry.viewmodel.HistoryViewModel
 
-class HistoryFragment : Fragment() {
+class HistoryFragment : PlacesRelatedFragment() {
     private val viewModel by lazy {
         ViewModelProvider(this).get(HistoryViewModel::class.java)
+    }
+
+    private lateinit var binding:FragmentHistoryBinding
+
+    override fun refreshBindingForLocation() {
+        binding.recyclerViewHistory.adapter?.notifyDataSetChanged()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentHistoryBinding
+        binding = FragmentHistoryBinding
             .inflate(layoutInflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -45,6 +51,7 @@ class HistoryFragment : Fragment() {
                             startActivity(intent)
                         }
                         2 -> viewModel.deleteVisit(dataItem.data.visit)
+                        3 -> presentEditPlaceNameDialog(dataItem.data.location, viewModel)
                     }
                 }
 
@@ -62,7 +69,7 @@ class HistoryFragment : Fragment() {
     companion object {
         private const val TAG = "HistoryFragment"
         private val DIALOG_OPTIONS = arrayOf(
-            "Add Location to Favorite", "Check In to Location", "Delete Visit")
+            "Add Location to Favorite", "Check In to Location", "Delete Visit", "Rename Place")
 
         @JvmStatic
         fun newInstance() = HistoryFragment()
