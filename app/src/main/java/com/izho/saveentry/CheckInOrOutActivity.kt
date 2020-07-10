@@ -27,6 +27,7 @@ import androidx.core.app.TaskStackBuilder
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.izho.saveentry.data.Location
@@ -228,8 +229,7 @@ class CheckInOrOutActivity : AppCompatActivity() {
         container.addView(offlineCheckInOrOut, newLayoutParamms)
         if (action == "checkIn") {
             toolbar.title = "Offline check in..."
-            offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView)
-                .setImageDrawable(getDrawable(R.drawable.checkin_screenshot))
+            Glide.with(this).load(R.drawable.checkin_screenshot).into(offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView))
             Toast.makeText(this, "No internet, using offline check in", Toast.LENGTH_SHORT).show()
 
             var venueName = intent.extras?.getString("venueName") ?: ""
@@ -267,10 +267,9 @@ class CheckInOrOutActivity : AppCompatActivity() {
             })
         } else {
             toolbar.title = "Offline check out..."
-            offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView)
-                .setImageDrawable(getDrawable(R.drawable.checkout_screenshot))
+            Glide.with(this).load(R.drawable.checkout_screenshot).into(offlineCheckInOrOut.findViewById<ImageView>(R.id.imageView))
             Toast.makeText(this, "No internet, using offline check out", Toast.LENGTH_SHORT).show()
-            FirebaseCrashlytics.getInstance().setCustomKey("offline_checkout", true);
+            FirebaseCrashlytics.getInstance().setCustomKey("offline_checkout", true)
             viewModel.checkOutOfLocation(offlineCheckInOrOut, null)
             GlobalScope.launch {
                 if (visitId != null) {
