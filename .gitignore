@@ -16,3 +16,4 @@ app/releases/**
 
 app/google-services.json
 app/release/
+app/debug/
