@@ -27,6 +27,8 @@ import android.view.SurfaceHolder
 import android.view.WindowManager
 import com.google.android.gms.common.images.Size
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.internal.CrashlyticsNativeComponent
 import com.izho.saveentry.utils.Utils
 import com.izho.saveentry.settings.PreferenceUtils
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
@@ -190,15 +192,23 @@ class CameraSource(private val graphicOverlay: GraphicOverlay) {
                 previewFpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]
         )
 
-        parameters.previewFormat = IMAGE_FORMAT
+        if (parameters.supportedPreviewFormats.contains(IMAGE_FORMAT)) {
+            parameters.previewFormat = IMAGE_FORMAT
+        } else {
+            FirebaseCrashlytics.getInstance().recordException(CameraNotSupportedException("Image format"))
+        }
 
         if (parameters.supportedFocusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
             parameters.focusMode = Parameters.FOCUS_MODE_CONTINUOUS_VIDEO
         } else {
-            Log.i(TAG, "Camera auto focus is not supported on this device.")
+            FirebaseCrashlytics.getInstance().recordException(CameraNotSupportedException("focus mode"))
         }
 
-        camera.parameters = parameters
+        try {
+            camera.parameters = parameters
+        } catch (e:java.lang.RuntimeException) {
+            FirebaseCrashlytics.getInstance().recordException(CameraNotSupportedException("general"))
+        }
 
         camera.setPreviewCallbackWithBuffer(processingRunnable::setNextFrame)
 
@@ -531,4 +541,6 @@ class CameraSource(private val graphicOverlay: GraphicOverlay) {
             return selectedFpsRange
         }
     }
+
+    class CameraNotSupportedException(val s:String) : java.lang.Exception("Camera unsupported for: $s")
 }
